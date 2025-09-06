@@ -1,9 +1,6 @@
 import React from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ThemeProvider } from "next-themes";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "next-themes";
 import { MobileLayout } from "./components/MobileLayout";
 import { Landing } from "./pages/Landing";
 import { Login } from "./pages/auth/Login"; 
@@ -18,24 +15,17 @@ import { OTPVerification } from "./pages/auth/OTPVerification";
 import { ProfileSetup } from "./pages/auth/ProfileSetup";
 import { RegistrationSuccess } from "./pages/auth/RegistrationSuccess";
 import NotFound from "./pages/NotFound";
-
-const queryClient = new QueryClient();
+import "./index.css";
 
 const App = () => {
-  console.log("App component rendering");
-  console.log("React import:", React);
-  
   return (
-  <QueryClientProvider client={queryClient}>
     <ThemeProvider
       attribute="class"
       defaultTheme="system"
       enableSystem
       disableTransitionOnChange
     >
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+      <BrowserRouter>
         <Routes>
           {/* Landing page (no layout) */}
           <Route path="/" element={<Landing />} />
@@ -56,13 +46,12 @@ const App = () => {
             <Route path="learn" element={<Learn />} />
             <Route path="wallet" element={<Wallet />} />
           </Route>
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
-  </QueryClientProvider>
-);
+  );
 };
 
 export default App;
