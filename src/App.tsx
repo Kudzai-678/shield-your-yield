@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
+import { SplashCursor } from "./components/ui/splash-cursor";
 import { MobileLayout } from "./components/MobileLayout";
 import { Landing } from "./pages/Landing";
 import { Login } from "./pages/auth/Login"; 
@@ -26,6 +27,14 @@ const App = () => {
       enableSystem
       disableTransitionOnChange
     >
+      <SplashCursor 
+        DENSITY_DISSIPATION={2.8}
+        VELOCITY_DISSIPATION={1.5}
+        SPLAT_FORCE={4000}
+        SPLAT_RADIUS={0.15}
+        COLOR_UPDATE_SPEED={8}
+        BACK_COLOR={{ r: 0.2, g: 0.4, b: 0.1 }}
+      />
       <BrowserRouter>
         <Routes>
           {/* Landing page (no layout) */}
