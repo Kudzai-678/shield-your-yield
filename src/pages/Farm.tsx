@@ -4,8 +4,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FarmMap } from '@/components/FarmMap';
+import { useSearchParams } from 'react-router-dom';
 
 export const Farm = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'crops';
+
+  const handleTabChange = (value: string) => {
+    setSearchParams({ tab: value });
+  };
   return (
     <div className="p-3 sm:p-4 max-w-full overflow-hidden">
       <div className="mb-4 sm:mb-6">
@@ -13,7 +20,7 @@ export const Farm = () => {
         <p className="text-sm sm:text-base text-muted-foreground">Manage your crops, livestock and farm details</p>
       </div>
 
-      <Tabs defaultValue="crops" className="space-y-4 sm:space-y-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
         <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1">
           <TabsTrigger value="crops" className="text-xs sm:text-sm truncate">
             <span className="sm:hidden">Crops</span>

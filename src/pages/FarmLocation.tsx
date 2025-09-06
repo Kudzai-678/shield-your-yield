@@ -53,7 +53,7 @@ export const FarmLocation = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate('/farm')}
+            onClick={() => navigate('/farm?tab=location')}
             className="flex-shrink-0"
           >
             <ArrowLeft className="h-5 w-5" />
