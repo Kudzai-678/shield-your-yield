@@ -1,4 +1,4 @@
-import { Shield, Plus, Eye, FileText, Calculator, Phone, MessageCircle, HelpCircle, AlertTriangle } from 'lucide-react';
+import { Shield, Plus, Eye, FileText, Calculator, Phone, MessageCircle, HelpCircle, AlertTriangle, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -44,6 +44,10 @@ export const Cover = () => {
                 <Plus className="h-5 w-5" />
                 Insure Livestock
               </Button>
+              <Button variant="sky" size="wide">
+                <Plus className="h-5 w-5" />
+                Insure Equipment
+              </Button>
               
               <div className="mt-6 p-4 bg-accent/50 rounded-lg">
                 <h3 className="font-semibold mb-2">Coverage Options</h3>
@@ -59,6 +63,10 @@ export const Cover = () => {
                   <div className="flex justify-between">
                     <span>• Theft & Disease</span>
                     <span className="text-primary">From R75/month</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>• Equipment Protection</span>
+                    <span className="text-primary">From R90/month</span>
                   </div>
                 </div>
               </div>
