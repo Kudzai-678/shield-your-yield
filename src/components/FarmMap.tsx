@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Maximize2, MapPin, Satellite, Navigation } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 // Farm coordinates (KwaZulu-Natal, Msinga)
 const FARM_LAT = -28.7282;
@@ -26,7 +26,7 @@ interface FarmMapProps {
 }
 
 export const FarmMap: React.FC<FarmMapProps> = ({ isCompact = false, className = '' }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'satellite' | 'street'>('satellite');
 
   // Google Maps Static API URL (using satellite view)
@@ -82,71 +82,19 @@ export const FarmMap: React.FC<FarmMapProps> = ({ isCompact = false, className =
 
   if (isCompact) {
     return (
-      <Dialog open={isExpanded} onOpenChange={setIsExpanded}>
-        <DialogTrigger asChild>
-          <div className="relative cursor-pointer group">
-            <MapPreview compact />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 rounded-lg flex items-center justify-center">
-              <Button
-                variant="secondary"
-                size="sm"
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              >
-                <Maximize2 className="w-4 h-4 mr-2" />
-                Expand Map
-              </Button>
-            </div>
-          </div>
-        </DialogTrigger>
-        <DialogContent className="max-w-4xl h-[80vh]">
-          <DialogHeader>
-            <DialogTitle>Farm Location - Interactive View</DialogTitle>
-          </DialogHeader>
-          <div className="h-full space-y-4">
-            <MapPreview />
-            
-            {/* Farm details */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4">
-              <Card className="p-3 sm:p-4">
-                <h4 className="font-semibold mb-2 text-sm sm:text-base">Farm Assets</h4>
-                <div className="space-y-2">
-                  {farmMarkers.map((marker) => (
-                    <div key={marker.id} className="flex items-center gap-2 text-xs sm:text-sm min-w-0">
-                      <div className={`w-2 h-2 ${marker.color} rounded-full flex-shrink-0`} />
-                      <span className="truncate flex-1 min-w-0">{marker.name}</span>
-                      <Badge variant="outline" className="text-[10px] sm:text-xs flex-shrink-0">
-                        {marker.type}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-              
-              <Card className="p-3 sm:p-4">
-                <h4 className="font-semibold mb-2 text-sm sm:text-base">Location Details</h4>
-                <div className="space-y-2 text-xs sm:text-sm">
-                  <div className="flex flex-wrap justify-between gap-1 min-w-0">
-                    <span className="text-muted-foreground flex-shrink-0">Coordinates:</span>
-                    <span className="truncate text-right">{FARM_LAT.toFixed(4)}°S, {FARM_LNG.toFixed(4)}°E</span>
-                  </div>
-                  <div className="flex flex-wrap justify-between gap-1 min-w-0">
-                    <span className="text-muted-foreground flex-shrink-0">Region:</span>
-                    <span className="truncate text-right">KwaZulu-Natal</span>
-                  </div>
-                  <div className="flex flex-wrap justify-between gap-1 min-w-0">
-                    <span className="text-muted-foreground flex-shrink-0">District:</span>
-                    <span className="truncate text-right">Msinga</span>
-                  </div>
-                  <div className="flex flex-wrap justify-between gap-1 min-w-0">
-                    <span className="text-muted-foreground flex-shrink-0">Total Area:</span>
-                    <span className="truncate text-right">15.5 hectares</span>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <div className="relative cursor-pointer group" onClick={() => navigate('/farm/location')}>
+        <MapPreview compact />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 rounded-lg flex items-center justify-center">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          >
+            <Maximize2 className="w-4 h-4 mr-2" />
+            View Full Map
+          </Button>
+        </div>
+      </div>
     );
   }
 

@@ -8,6 +8,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { Cover } from "./pages/Cover";
 import { CropSelection } from "./pages/CropSelection";
 import { Farm } from "./pages/Farm";
+import { FarmLocation } from "./pages/FarmLocation";
 import { Learn } from "./pages/Learn";
 import { Wallet } from "./pages/Wallet";
 import { PhoneRegistration } from "./pages/auth/PhoneRegistration";
@@ -43,6 +44,7 @@ const App = () => {
             <Route path="cover" element={<Cover />} />
             <Route path="cover/crop-selection" element={<CropSelection />} />
             <Route path="farm" element={<Farm />} />
+            <Route path="farm/location" element={<FarmLocation />} />
             <Route path="learn" element={<Learn />} />
             <Route path="wallet" element={<Wallet />} />
           </Route>
