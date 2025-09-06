@@ -106,15 +106,15 @@ export const FarmMap: React.FC<FarmMapProps> = ({ isCompact = false, className =
             <MapPreview />
             
             {/* Farm details */}
-            <div className="grid grid-cols-2 gap-4">
-              <Card className="p-4">
-                <h4 className="font-semibold mb-2">Farm Assets</h4>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4">
+              <Card className="p-3 sm:p-4">
+                <h4 className="font-semibold mb-2 text-sm sm:text-base">Farm Assets</h4>
                 <div className="space-y-2">
                   {farmMarkers.map((marker) => (
-                    <div key={marker.id} className="flex items-center gap-2 text-sm">
-                      <div className={`w-2 h-2 ${marker.color} rounded-full`} />
-                      <span>{marker.name}</span>
-                      <Badge variant="outline" className="text-xs">
+                    <div key={marker.id} className="flex items-center gap-2 text-xs sm:text-sm min-w-0">
+                      <div className={`w-2 h-2 ${marker.color} rounded-full flex-shrink-0`} />
+                      <span className="truncate flex-1 min-w-0">{marker.name}</span>
+                      <Badge variant="outline" className="text-[10px] sm:text-xs flex-shrink-0">
                         {marker.type}
                       </Badge>
                     </div>
@@ -122,24 +122,24 @@ export const FarmMap: React.FC<FarmMapProps> = ({ isCompact = false, className =
                 </div>
               </Card>
               
-              <Card className="p-4">
-                <h4 className="font-semibold mb-2">Location Details</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Coordinates:</span>
-                    <span>{FARM_LAT.toFixed(4)}°S, {FARM_LNG.toFixed(4)}°E</span>
+              <Card className="p-3 sm:p-4">
+                <h4 className="font-semibold mb-2 text-sm sm:text-base">Location Details</h4>
+                <div className="space-y-2 text-xs sm:text-sm">
+                  <div className="flex flex-wrap justify-between gap-1 min-w-0">
+                    <span className="text-muted-foreground flex-shrink-0">Coordinates:</span>
+                    <span className="truncate text-right">{FARM_LAT.toFixed(4)}°S, {FARM_LNG.toFixed(4)}°E</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Region:</span>
-                    <span>KwaZulu-Natal</span>
+                  <div className="flex flex-wrap justify-between gap-1 min-w-0">
+                    <span className="text-muted-foreground flex-shrink-0">Region:</span>
+                    <span className="truncate text-right">KwaZulu-Natal</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">District:</span>
-                    <span>Msinga</span>
+                  <div className="flex flex-wrap justify-between gap-1 min-w-0">
+                    <span className="text-muted-foreground flex-shrink-0">District:</span>
+                    <span className="truncate text-right">Msinga</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Total Area:</span>
-                    <span>15.5 hectares</span>
+                  <div className="flex flex-wrap justify-between gap-1 min-w-0">
+                    <span className="text-muted-foreground flex-shrink-0">Total Area:</span>
+                    <span className="truncate text-right">15.5 hectares</span>
                   </div>
                 </div>
               </Card>
