@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { SplashCursor } from '@/components/ui/splash-cursor';
 import { Shield, Smartphone, Zap, Users, Leaf, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import heroImage from '@/assets/hero-farming.jpg';
@@ -32,6 +33,7 @@ export const Landing = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SplashCursor />
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-primary text-primary-foreground">
         <div className="absolute inset-0">
