@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MobileLayout } from "./components/MobileLayout";
 import { Home } from "./pages/Home";
 import { Cover } from "./pages/Cover";
+import { CropSelection } from "./pages/CropSelection";
 import { Farm } from "./pages/Farm";
 import { Learn } from "./pages/Learn";
 import { Wallet } from "./pages/Wallet";
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/" element={<MobileLayout />}>
             <Route index element={<Home />} />
             <Route path="cover" element={<Cover />} />
+            <Route path="cover/crop-selection" element={<CropSelection />} />
             <Route path="farm" element={<Farm />} />
             <Route path="learn" element={<Learn />} />
             <Route path="wallet" element={<Wallet />} />

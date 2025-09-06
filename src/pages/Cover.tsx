@@ -3,8 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useNavigate } from 'react-router-dom';
 
 export const Cover = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="p-4">
       <div className="mb-6">
@@ -29,7 +32,11 @@ export const Cover = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button variant="hero" size="wide">
+              <Button 
+                variant="hero" 
+                size="wide"
+                onClick={() => navigate('/cover/crop-selection')}
+              >
                 <Plus className="h-5 w-5" />
                 Insure Crops
               </Button>
