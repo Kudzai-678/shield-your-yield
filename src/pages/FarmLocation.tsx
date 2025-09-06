@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { AdvancedMap, type MapMarker, type MapPolygon } from '@/components/ui/interactive-map';
 
 const FARM_LAT = -28.7041;
 const FARM_LNG = 24.2464;
 
-const farmMarkers = [
+const farmAssets = [
   { id: 1, name: "Main Crop Field", type: "Crops", color: "bg-green-500" },
   { id: 2, name: "Livestock Grazing Area", type: "Livestock", color: "bg-blue-500" },
   { id: 3, name: "Water Source", type: "Infrastructure", color: "bg-cyan-500" },
@@ -16,31 +17,73 @@ const farmMarkers = [
   { id: 6, name: "Secondary Field", type: "Crops", color: "bg-green-400" },
 ];
 
-const MapPreview = () => (
-  <div className="relative w-full h-64 sm:h-80 bg-muted rounded-lg overflow-hidden">
-    <img
-      src="/placeholder.svg"
-      alt="Farm satellite view"
-      className="w-full h-full object-cover"
+// Convert farm assets to map markers
+const farmMarkers: MapMarker[] = farmAssets.map((asset, index) => {
+  // Convert bg-color classes to leaflet marker colors
+  const colorMap: Record<string, string> = {
+    'bg-green-500': 'green',
+    'bg-green-400': 'green',
+    'bg-blue-500': 'blue',
+    'bg-cyan-500': 'blue',
+    'bg-orange-500': 'orange',
+    'bg-purple-500': 'violet',
+  };
+
+  return {
+    id: asset.id,
+    position: [
+      FARM_LAT + (Math.random() - 0.5) * 0.01, // Random position within farm area
+      FARM_LNG + (Math.random() - 0.5) * 0.01,
+    ] as [number, number],
+    color: colorMap[asset.color] || 'blue',
+    size: 'medium' as const,
+    popup: {
+      title: asset.name,
+      content: `Type: ${asset.type}`,
+    },
+  };
+});
+
+// Farm boundary polygon
+const farmBoundary: MapPolygon[] = [
+  {
+    id: 'farm-boundary',
+    positions: [
+      [FARM_LAT + 0.005, FARM_LNG - 0.005],
+      [FARM_LAT + 0.005, FARM_LNG + 0.005],
+      [FARM_LAT - 0.005, FARM_LNG + 0.005],
+      [FARM_LAT - 0.005, FARM_LNG - 0.005],
+    ],
+    style: { color: 'green', weight: 2, fillOpacity: 0.1 },
+    popup: 'Farm Boundary - 15.5 hectares',
+  },
+];
+
+const InteractiveFarmMap = () => {
+  const handleMarkerClick = (marker: MapMarker) => {
+    console.log('Farm asset clicked:', marker);
+  };
+
+  return (
+    <AdvancedMap
+      center={[FARM_LAT, FARM_LNG]}
+      zoom={16}
+      markers={farmMarkers}
+      polygons={farmBoundary}
+      onMarkerClick={handleMarkerClick}
+      enableClustering={true}
+      enableSearch={true}
+      enableControls={true}
+      mapLayers={{
+        openstreetmap: true,
+        satellite: false,
+        traffic: false
+      }}
+      style={{ height: '320px', width: '100%' }}
+      className="rounded-lg overflow-hidden"
     />
-    <div className="absolute inset-0 bg-green-500/10" />
-    
-    {/* Farm markers */}
-    {farmMarkers.map((marker) => (
-      <div
-        key={marker.id}
-        className={`absolute w-3 h-3 ${marker.color} rounded-full border-2 border-white shadow-md`}
-        style={{
-          left: `${20 + (marker.id * 12)}%`,
-          top: `${30 + (marker.id * 8)}%`,
-        }}
-      />
-    ))}
-    
-    {/* Farm boundary outline */}
-    <div className="absolute inset-4 border-2 border-dashed border-green-600/60 rounded-lg" />
-  </div>
-);
+  );
+};
 
 export const FarmLocation = () => {
   const navigate = useNavigate();
@@ -70,7 +113,7 @@ export const FarmLocation = () => {
         {/* Map Section */}
         <Card className="p-4">
           <h2 className="text-lg font-semibold mb-4">Farm Overview Map</h2>
-          <MapPreview />
+          <InteractiveFarmMap />
         </Card>
 
         {/* Farm Assets and Location Details */}
@@ -78,12 +121,12 @@ export const FarmLocation = () => {
           <Card className="p-4">
             <h3 className="font-semibold mb-4 text-base">Farm Assets</h3>
             <div className="space-y-3">
-              {farmMarkers.map((marker) => (
-                <div key={marker.id} className="flex items-center gap-3 text-sm min-w-0">
-                  <div className={`w-3 h-3 ${marker.color} rounded-full flex-shrink-0`} />
-                  <span className="truncate flex-1 min-w-0">{marker.name}</span>
+              {farmAssets.map((asset) => (
+                <div key={asset.id} className="flex items-center gap-3 text-sm min-w-0">
+                  <div className={`w-3 h-3 ${asset.color} rounded-full flex-shrink-0`} />
+                  <span className="truncate flex-1 min-w-0">{asset.name}</span>
                   <Badge variant="outline" className="text-xs flex-shrink-0">
-                    {marker.type}
+                    {asset.type}
                   </Badge>
                 </div>
               ))}
