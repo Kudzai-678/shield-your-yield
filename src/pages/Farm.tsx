@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { FarmMap } from '@/components/FarmMap';
 
 export const Farm = () => {
   return (
@@ -446,12 +447,7 @@ export const Farm = () => {
                 </div>
               </div>
               
-              <div className="bg-muted/30 h-48 rounded-lg flex items-center justify-center">
-                <div className="text-center text-muted-foreground">
-                  <MapPin className="h-12 w-12 mx-auto mb-2" />
-                  <p className="text-sm">Satellite view coming soon</p>
-                </div>
-              </div>
+              <FarmMap isCompact={true} />
               
               <div className="flex gap-2">
                 <Button variant="outline" size="sm">
