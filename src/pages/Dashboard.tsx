@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import heroImage from '@/assets/hero-farming.jpg';
 
 export const Dashboard = () => {
+  // Dashboard component for authenticated users
   return (
     <div className="p-4 space-y-6">
       {/* Hero Section */}
