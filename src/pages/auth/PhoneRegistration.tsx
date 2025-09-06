@@ -66,7 +66,7 @@ export function PhoneRegistration() {
           </div>
           <CardTitle className="text-2xl">Register Your Phone</CardTitle>
           <CardDescription>
-            Enter your phone number to get started with AgriInsure
+            Enter your phone number to get started with InsurAgri
           </CardDescription>
         </CardHeader>
         
