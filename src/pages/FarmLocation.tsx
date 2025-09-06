@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { SimpleMap, type SimpleMapMarker, type SimpleMapPolygon } from '@/components/ui/simple-map';
+import { StaticFarmMap } from '@/components/ui/static-farm-map';
 
 const FARM_LAT = -28.7041;
 const FARM_LNG = 24.2464;
@@ -16,65 +16,6 @@ const farmAssets = [
   { id: 5, name: "Equipment Shed", type: "Infrastructure", color: "bg-purple-500" },
   { id: 6, name: "Secondary Field", type: "Crops", color: "bg-green-400" },
 ];
-
-// Convert farm assets to map markers
-const farmMarkers: SimpleMapMarker[] = farmAssets.map((asset, index) => {
-  // Convert bg-color classes to leaflet marker colors
-  const colorMap: Record<string, string> = {
-    'bg-green-500': 'green',
-    'bg-green-400': 'green',
-    'bg-blue-500': 'blue',
-    'bg-cyan-500': 'blue',
-    'bg-orange-500': 'orange',
-    'bg-purple-500': 'violet',
-  };
-
-  return {
-    id: asset.id,
-    position: [
-      FARM_LAT + (Math.random() - 0.5) * 0.01, // Random position within farm area
-      FARM_LNG + (Math.random() - 0.5) * 0.01,
-    ] as [number, number],
-    color: colorMap[asset.color] || 'blue',
-    popup: {
-      title: asset.name,
-      content: `Type: ${asset.type}`,
-    },
-  };
-});
-
-// Farm boundary polygon
-const farmBoundary: SimpleMapPolygon[] = [
-  {
-    id: 'farm-boundary',
-    positions: [
-      [FARM_LAT + 0.005, FARM_LNG - 0.005],
-      [FARM_LAT + 0.005, FARM_LNG + 0.005],
-      [FARM_LAT - 0.005, FARM_LNG + 0.005],
-      [FARM_LAT - 0.005, FARM_LNG - 0.005],
-    ],
-    style: { color: 'green', weight: 2, fillOpacity: 0.1 },
-    popup: 'Farm Boundary - 15.5 hectares',
-  },
-];
-
-const InteractiveFarmMap = () => {
-  const handleMarkerClick = (marker: SimpleMapMarker) => {
-    console.log('Farm asset clicked:', marker);
-  };
-
-  return (
-    <SimpleMap
-      center={[FARM_LAT, FARM_LNG]}
-      zoom={16}
-      markers={farmMarkers}
-      polygons={farmBoundary}
-      onMarkerClick={handleMarkerClick}
-      style={{ height: '320px', width: '100%' }}
-      className="rounded-lg overflow-hidden"
-    />
-  );
-};
 
 export const FarmLocation = () => {
   const navigate = useNavigate();
@@ -104,7 +45,7 @@ export const FarmLocation = () => {
         {/* Map Section */}
         <Card className="p-4">
           <h2 className="text-lg font-semibold mb-4">Farm Overview Map</h2>
-          <InteractiveFarmMap />
+          <StaticFarmMap />
         </Card>
 
         {/* Farm Assets and Location Details */}
