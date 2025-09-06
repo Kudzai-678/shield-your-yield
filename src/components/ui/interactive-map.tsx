@@ -339,57 +339,33 @@ export const AdvancedMap: React.FC<AdvancedMapProps> = ({
           />
         )}
 
-        {/* Markers with clustering */}
-        {enableClustering ? (
-          <MarkerClusterGroup>
-            {markers.map((marker, index) => (
-              <Marker
-                key={marker.id || index}
-                position={marker.position}
-                icon={marker.icon || createCustomIcon(marker.color, marker.size)}
-                eventHandlers={{
-                  click: () => onMarkerClick && onMarkerClick(marker)
-                }}
-              >
-                {marker.popup && (
-                  <Popup>
-                    <div>
-                      <h3>{marker.popup.title}</h3>
-                      <p>{marker.popup.content}</p>
-                      {marker.popup.image && (
-                        <img 
-                          src={marker.popup.image} 
-                          alt={marker.popup.title}
-                          style={{ maxWidth: '200px', height: 'auto' }}
-                        />
-                      )}
-                    </div>
-                  </Popup>
-                )}
-              </Marker>
-            ))}
-          </MarkerClusterGroup>
-        ) : (
-          markers.map((marker, index) => (
-            <Marker
-              key={marker.id || index}
-              position={marker.position}
-              icon={marker.icon || createCustomIcon(marker.color, marker.size)}
-              eventHandlers={{
-                click: () => onMarkerClick && onMarkerClick(marker)
-              }}
-            >
-              {marker.popup && (
-                <Popup>
-                  <div>
-                    <h3>{marker.popup.title}</h3>
-                    <p>{marker.popup.content}</p>
-                  </div>
-                </Popup>
-              )}
-            </Marker>
-          ))
-        )}
+        {/* Markers */}
+        {markers.map((marker, index) => (
+          <Marker
+            key={marker.id || index}
+            position={marker.position}
+            icon={marker.icon || createCustomIcon(marker.color, marker.size)}
+            eventHandlers={{
+              click: () => onMarkerClick && onMarkerClick(marker)
+            }}
+          >
+            {marker.popup && (
+              <Popup>
+                <div>
+                  <h3>{marker.popup.title}</h3>
+                  <p>{marker.popup.content}</p>
+                  {marker.popup.image && (
+                    <img 
+                      src={marker.popup.image} 
+                      alt={marker.popup.title}
+                      style={{ maxWidth: '200px', height: 'auto' }}
+                    />
+                  )}
+                </div>
+              </Popup>
+            )}
+          </Marker>
+        ))}
 
         {/* User location marker */}
         {userLocation && (
