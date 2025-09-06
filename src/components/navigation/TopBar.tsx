@@ -1,5 +1,6 @@
 import { Bell, Settings, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export const TopBar = () => {
   return (
@@ -19,6 +20,7 @@ export const TopBar = () => {
           <Button variant="ghost" size="icon">
             <Bell className="h-5 w-5" />
           </Button>
+          <ThemeToggle />
           <Button variant="ghost" size="icon">
             <Settings className="h-5 w-5" />
           </Button>
