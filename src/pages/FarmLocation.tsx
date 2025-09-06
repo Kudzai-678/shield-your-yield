@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AdvancedMap, type MapMarker, type MapPolygon } from '@/components/ui/interactive-map';
+import { SimpleMap, type SimpleMapMarker, type SimpleMapPolygon } from '@/components/ui/simple-map';
 
 const FARM_LAT = -28.7041;
 const FARM_LNG = 24.2464;
@@ -18,7 +18,7 @@ const farmAssets = [
 ];
 
 // Convert farm assets to map markers
-const farmMarkers: MapMarker[] = farmAssets.map((asset, index) => {
+const farmMarkers: SimpleMapMarker[] = farmAssets.map((asset, index) => {
   // Convert bg-color classes to leaflet marker colors
   const colorMap: Record<string, string> = {
     'bg-green-500': 'green',
@@ -36,7 +36,6 @@ const farmMarkers: MapMarker[] = farmAssets.map((asset, index) => {
       FARM_LNG + (Math.random() - 0.5) * 0.01,
     ] as [number, number],
     color: colorMap[asset.color] || 'blue',
-    size: 'medium' as const,
     popup: {
       title: asset.name,
       content: `Type: ${asset.type}`,
@@ -45,7 +44,7 @@ const farmMarkers: MapMarker[] = farmAssets.map((asset, index) => {
 });
 
 // Farm boundary polygon
-const farmBoundary: MapPolygon[] = [
+const farmBoundary: SimpleMapPolygon[] = [
   {
     id: 'farm-boundary',
     positions: [
@@ -60,25 +59,17 @@ const farmBoundary: MapPolygon[] = [
 ];
 
 const InteractiveFarmMap = () => {
-  const handleMarkerClick = (marker: MapMarker) => {
+  const handleMarkerClick = (marker: SimpleMapMarker) => {
     console.log('Farm asset clicked:', marker);
   };
 
   return (
-    <AdvancedMap
+    <SimpleMap
       center={[FARM_LAT, FARM_LNG]}
       zoom={16}
       markers={farmMarkers}
       polygons={farmBoundary}
       onMarkerClick={handleMarkerClick}
-      enableClustering={true}
-      enableSearch={true}
-      enableControls={true}
-      mapLayers={{
-        openstreetmap: true,
-        satellite: false,
-        traffic: false
-      }}
       style={{ height: '320px', width: '100%' }}
       className="rounded-lg overflow-hidden"
     />
