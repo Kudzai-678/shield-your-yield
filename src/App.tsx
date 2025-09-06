@@ -5,7 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MobileLayout } from "./components/MobileLayout";
-import { Home } from "./pages/Home";
+import { Landing } from "./pages/Landing";
+import { Dashboard } from "./pages/Dashboard";
+import { Login } from "./pages/auth/Login";
 import { Cover } from "./pages/Cover";
 import { CropSelection } from "./pages/CropSelection";
 import { Farm } from "./pages/Farm";
@@ -32,15 +34,19 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
         <Routes>
+          {/* Landing page (no layout) */}
+          <Route path="/" element={<Landing />} />
+          
           {/* Auth routes (standalone, no mobile layout) */}
+          <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<PhoneRegistration />} />
           <Route path="/auth/verify" element={<OTPVerification />} />
           <Route path="/auth/profile-setup" element={<ProfileSetup />} />
           <Route path="/auth/success" element={<RegistrationSuccess />} />
           
-          {/* Main app routes */}
+          {/* Main app routes (authenticated) */}
           <Route path="/" element={<MobileLayout />}>
-            <Route index element={<Home />} />
+            <Route path="dashboard" element={<Dashboard />} />
             <Route path="cover" element={<Cover />} />
             <Route path="cover/crop-selection" element={<CropSelection />} />
             <Route path="farm" element={<Farm />} />

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import heroImage from '@/assets/hero-farming.jpg';
 
-export const Home = () => {
+export const Dashboard = () => {
   return (
     <div className="p-4 space-y-6">
       {/* Hero Section */}
