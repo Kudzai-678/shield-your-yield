@@ -72,7 +72,7 @@ export function OTPVerification() {
 
   return (
     <div className="min-h-screen bg-background p-4 flex items-center justify-center">
-      <Card className="w-full max-w-md shadow-card">
+      <Card className="w-full max-w-md shadow-card relative">
         <CardHeader className="text-center space-y-4">
           <Button
             variant="ghost"
@@ -135,10 +135,17 @@ export function OTPVerification() {
             </div>
           </div>
 
-          <div className="text-center">
+          <div className="text-center space-y-2">
             <p className="text-sm text-muted-foreground">
               For testing, use code: <span className="font-mono text-primary">123456</span>
             </p>
+            <Button
+              variant="link"
+              onClick={() => navigate("/")}
+              className="text-sm text-muted-foreground"
+            >
+              Back to Home
+            </Button>
           </div>
         </CardContent>
       </Card>

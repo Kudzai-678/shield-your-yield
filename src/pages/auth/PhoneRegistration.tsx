@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Smartphone, MessageSquare } from "lucide-react";
+import { Smartphone, MessageSquare, ArrowLeft } from "lucide-react";
 
 export function PhoneRegistration() {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -59,7 +59,15 @@ export function PhoneRegistration() {
 
   return (
     <div className="min-h-screen bg-background p-4 flex items-center justify-center">
-      <Card className="w-full max-w-md shadow-card">
+      <Card className="w-full max-w-md shadow-card relative">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate("/")}
+          className="absolute top-4 left-4"
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </Button>
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto w-16 h-16 bg-primary rounded-full flex items-center justify-center">
             <Smartphone className="w-8 h-8 text-primary-foreground" />

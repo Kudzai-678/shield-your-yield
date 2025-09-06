@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { UserPlus, MapPin, Tractor } from "lucide-react";
+import { UserPlus, MapPin, Tractor, ArrowLeft } from "lucide-react";
 
 const profileSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -75,7 +75,15 @@ export function ProfileSetup() {
 
   return (
     <div className="min-h-screen bg-background p-4 flex items-center justify-center">
-      <Card className="w-full max-w-2xl shadow-card">
+      <Card className="w-full max-w-2xl shadow-card relative">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate("/")}
+          className="absolute top-4 left-4"
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </Button>
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto w-16 h-16 bg-earth rounded-full flex items-center justify-center">
             <UserPlus className="w-8 h-8 text-earth-foreground" />
