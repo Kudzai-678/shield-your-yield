@@ -11,6 +11,10 @@ import { CropSelection } from "./pages/CropSelection";
 import { Farm } from "./pages/Farm";
 import { Learn } from "./pages/Learn";
 import { Wallet } from "./pages/Wallet";
+import { PhoneRegistration } from "./pages/auth/PhoneRegistration";
+import { OTPVerification } from "./pages/auth/OTPVerification";
+import { ProfileSetup } from "./pages/auth/ProfileSetup";
+import { RegistrationSuccess } from "./pages/auth/RegistrationSuccess";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +32,13 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
         <Routes>
+          {/* Auth routes (standalone, no mobile layout) */}
+          <Route path="/auth/register" element={<PhoneRegistration />} />
+          <Route path="/auth/verify" element={<OTPVerification />} />
+          <Route path="/auth/profile-setup" element={<ProfileSetup />} />
+          <Route path="/auth/success" element={<RegistrationSuccess />} />
+          
+          {/* Main app routes */}
           <Route path="/" element={<MobileLayout />}>
             <Route index element={<Home />} />
             <Route path="cover" element={<Cover />} />
