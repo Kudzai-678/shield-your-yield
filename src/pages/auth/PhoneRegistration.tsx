@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Smartphone, MessageSquare, ArrowLeft } from "lucide-react";
 
 export function PhoneRegistration() {
@@ -59,6 +60,11 @@ export function PhoneRegistration() {
 
   return (
     <div className="min-h-screen bg-background p-4 flex items-center justify-center">
+      {/* Theme Toggle */}
+      <div className="fixed top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
+      
       <Card className="w-full max-w-md shadow-card relative">
         <Button
           variant="ghost"

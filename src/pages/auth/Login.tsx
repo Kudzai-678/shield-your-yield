@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Leaf, ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -20,6 +21,11 @@ export const Login = () => {
 
   return (
     <div className="min-h-screen bg-gradient-primary flex items-center justify-center p-4">
+      {/* Theme Toggle */}
+      <div className="fixed top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
+      
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center text-primary-foreground">

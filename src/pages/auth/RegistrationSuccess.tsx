@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { CheckCircle, Shield, Tractor, CloudRain, DollarSign } from "lucide-react";
 
 export function RegistrationSuccess() {
@@ -54,6 +55,11 @@ export function RegistrationSuccess() {
 
   return (
     <div className="min-h-screen bg-background p-4 flex items-center justify-center">
+      {/* Theme Toggle */}
+      <div className="fixed top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
+      
       <Card className="w-full max-w-2xl shadow-card">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto w-20 h-20 bg-success rounded-full flex items-center justify-center">

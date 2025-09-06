@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { UserPlus, MapPin, Tractor, ArrowLeft } from "lucide-react";
 
 const profileSchema = z.object({
@@ -75,6 +76,11 @@ export function ProfileSetup() {
 
   return (
     <div className="min-h-screen bg-background p-4 flex items-center justify-center">
+      {/* Theme Toggle */}
+      <div className="fixed top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
+      
       <Card className="w-full max-w-2xl shadow-card relative">
         <Button
           variant="ghost"

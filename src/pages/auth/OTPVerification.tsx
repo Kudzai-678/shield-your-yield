@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Shield, ArrowLeft } from "lucide-react";
 
 export function OTPVerification() {
@@ -72,6 +73,11 @@ export function OTPVerification() {
 
   return (
     <div className="min-h-screen bg-background p-4 flex items-center justify-center">
+      {/* Theme Toggle */}
+      <div className="fixed top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
+      
       <Card className="w-full max-w-md shadow-card relative">
         <CardHeader className="text-center space-y-4">
           <Button
