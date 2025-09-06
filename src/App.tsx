@@ -11,6 +11,7 @@ import { CropSelection } from "./pages/CropSelection";
 import { Farm } from "./pages/Farm";
 import { Learn } from "./pages/Learn";
 import { Wallet } from "./pages/Wallet";
+import { MapDemo } from "./pages/MapDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="farm" element={<Farm />} />
             <Route path="learn" element={<Learn />} />
             <Route path="wallet" element={<Wallet />} />
+            <Route path="map-demo" element={<MapDemo />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
