@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,15 +65,39 @@ export function ProfileSetup() {
 
   const onSubmit = async (data: ProfileFormData) => {
     setIsLoading(true);
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('Not authenticated');
+      }
 
-    // Simulate API call
-    setTimeout(() => {
-      // Store profile data
-      localStorage.setItem("userProfile", JSON.stringify(data));
-      localStorage.setItem("registrationComplete", "true");
-      navigate("/auth/success");
+      // Update profile in database
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          first_name: data.firstName,
+          last_name: data.lastName,
+          id_number: data.idNumber,
+          province: data.province,
+          farm_type: data.farmType,
+          insurance_interests: data.insuranceInterest
+        })
+        .eq('user_id', user.id);
+
+      if (error) {
+        throw error;
+      }
+      
+      toast.success('Profile updated successfully!');
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Profile setup error:', error);
+      toast.error('Failed to save profile. Please try again.');
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (

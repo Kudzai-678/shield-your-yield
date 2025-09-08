@@ -13,13 +13,15 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const SettingsDropdown = () => {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [pushNotifications, setPushNotifications] = useState(true);
 
-  const handleLogout = () => {
-    // Add logout logic here (clear auth, redirect, etc.)
+  const handleLogout = async () => {
+    await signOut();
     navigate('/');
   };
 

@@ -5,33 +5,41 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Leaf, ArrowLeft } from 'lucide-react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
-export const Login = () => {
+export const Register = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-  const { signIn, user } = useAuth();
+  const { signUp, user } = useAuth();
 
   // Redirect if already authenticated
   if (user) {
-    const from = location.state?.from?.pathname || '/dashboard';
-    navigate(from);
+    navigate('/dashboard');
     return null;
   }
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (password !== confirmPassword) {
+      return;
+    }
+
     setLoading(true);
     
-    const { error } = await signIn(email, password);
-    
+    const { error } = await signUp(email, password, {
+      first_name: firstName,
+      last_name: lastName
+    });
+
     if (!error) {
-      const from = location.state?.from?.pathname || '/dashboard';
-      navigate(from);
+      navigate('/auth/profile-setup');
     }
     
     setLoading(false);
@@ -59,20 +67,45 @@ export const Login = () => {
             <h1 className="text-2xl font-bold">InsurAgri</h1>
           </div>
           <p className="text-primary-foreground/90">
-            Welcome back to your farm insurance portal
+            Create your farm insurance account
           </p>
         </div>
 
-        {/* Login Form */}
+        {/* Registration Form */}
         <Card className="shadow-soft">
           <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl">Login to Your Account</CardTitle>
+            <CardTitle className="text-2xl">Create Your Account</CardTitle>
             <CardDescription>
-              Enter your email and password to access your account
+              Enter your details to get started with farm insurance
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleRegister} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    id="firstName"
+                    type="text"
+                    placeholder="John"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    placeholder="Doe"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+              
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
                 <Input
@@ -90,40 +123,47 @@ export const Login = () => {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder="Create a strong password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              {password !== confirmPassword && confirmPassword && (
+                <p className="text-sm text-destructive">Passwords do not match</p>
+              )}
 
               <Button 
                 type="submit"
                 className="w-full" 
                 size="mobile"
-                disabled={loading || !email || !password}
+                disabled={loading || !firstName || !lastName || !email || !password || password !== confirmPassword}
               >
-                {loading ? 'Signing In...' : 'Sign In'}
+                {loading ? 'Creating Account...' : 'Create Account'}
               </Button>
-
-              <div className="text-center">
-                <Link 
-                  to="/auth/forgot-password" 
-                  className="text-sm text-primary hover:underline"
-                >
-                  Forgot your password?
-                </Link>
-              </div>
-
-              <div className="text-center pt-4 border-t">
-                <p className="text-sm text-muted-foreground">
-                  Don't have an account?{' '}
-                  <Link to="/auth/register" className="text-primary hover:underline font-medium">
-                    Sign up here
-                  </Link>
-                </p>
-              </div>
             </form>
+
+            <div className="text-center pt-4 border-t mt-6">
+              <p className="text-sm text-muted-foreground">
+                Already have an account?{' '}
+                <Link to="/auth/login" className="text-primary hover:underline font-medium">
+                  Sign in here
+                </Link>
+              </p>
+            </div>
           </CardContent>
         </Card>
 
