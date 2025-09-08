@@ -1,4 +1,5 @@
 import { Settings, User, Palette, Bell, LogOut } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -10,6 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { LanguageSelector } from '@/components/ui/language-selector';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -18,6 +20,7 @@ import { useAuth } from '@/contexts/AuthContext';
 export const SettingsDropdown = () => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const { t } = useTranslation();
   const [pushNotifications, setPushNotifications] = useState(true);
 
   const handleLogout = async () => {
@@ -33,26 +36,30 @@ export const SettingsDropdown = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 bg-background border border-border">
-        <DropdownMenuLabel className="text-foreground">Settings</DropdownMenuLabel>
+        <DropdownMenuLabel className="text-foreground">{t('settings.title')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         
         <DropdownMenuItem onClick={() => navigate('/profile')} className="text-foreground hover:bg-muted cursor-pointer">
           <User className="mr-2 h-4 w-4" />
-          <span>Profile</span>
+          <span>{t('settings.profile')}</span>
         </DropdownMenuItem>
         
         <DropdownMenuItem className="text-foreground hover:bg-muted cursor-pointer">
           <Palette className="mr-2 h-4 w-4" />
           <div className="flex items-center justify-between w-full">
-            <span>App Appearance</span>
+            <span>{t('settings.appearance')}</span>
             <ThemeToggle className="ml-2 scale-75" />
           </div>
         </DropdownMenuItem>
         
         <DropdownMenuItem className="text-foreground hover:bg-muted cursor-pointer">
+          <LanguageSelector />
+        </DropdownMenuItem>
+        
+        <DropdownMenuItem className="text-foreground hover:bg-muted cursor-pointer">
           <Bell className="mr-2 h-4 w-4" />
           <div className="flex items-center justify-between w-full">
-            <span>Push Notifications</span>
+            <span>{t('settings.notifications')}</span>
             <Switch 
               checked={pushNotifications}
               onCheckedChange={setPushNotifications}
@@ -67,20 +74,20 @@ export const SettingsDropdown = () => {
           <AlertDialogTrigger asChild>
             <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive hover:bg-destructive/10 cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Logout</span>
+              <span>{t('settings.logout')}</span>
             </DropdownMenuItem>
           </AlertDialogTrigger>
           <AlertDialogContent className="bg-background border border-border">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-foreground">Are you sure you want to logout?</AlertDialogTitle>
+              <AlertDialogTitle className="text-foreground">{t('settings.logoutConfirm')}</AlertDialogTitle>
               <AlertDialogDescription className="text-muted-foreground">
-                You will be redirected to the landing page and will need to log in again to access your account.
+                {t('settings.logoutDescription')}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="text-foreground">Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="text-foreground">{t('settings.cancel')}</AlertDialogCancel>
               <AlertDialogAction onClick={handleLogout} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                Logout
+                {t('settings.logout')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

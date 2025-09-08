@@ -1,6 +1,7 @@
-import { Bell, Globe } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { LanguageSelector } from '@/components/ui/language-selector';
 import { SettingsDropdown } from '@/components/navigation/SettingsDropdown';
 
 export const TopBar = () => {
@@ -15,9 +16,7 @@ export const TopBar = () => {
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon">
-            <Globe className="h-5 w-5" />
-          </Button>
+          <LanguageSelector variant="icon" />
           <Button variant="ghost" size="icon">
             <Bell className="h-5 w-5" />
           </Button>

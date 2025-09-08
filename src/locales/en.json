@@ -1,0 +1,109 @@
+{
+  "app": {
+    "name": "InsurAgri",
+    "tagline": "Smart Insurance for South African Farmers"
+  },
+  "navigation": {
+    "home": "Home",
+    "cover": "Cover",
+    "farm": "Farm",
+    "learn": "Learn",
+    "wallet": "Wallet"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "appearance": "App Appearance",
+    "notifications": "Push Notifications",
+    "language": "Language",
+    "logout": "Logout",
+    "logoutConfirm": "Are you sure you want to logout?",
+    "logoutDescription": "You will be redirected to the landing page and will need to log in again to access your account.",
+    "cancel": "Cancel"
+  },
+  "languages": {
+    "en": "English",
+    "af": "Afrikaans",
+    "zu": "isiZulu",
+    "xh": "isiXhosa",
+    "nso": "Sepedi",
+    "st": "Sesotho",
+    "tn": "Setswana",
+    "ss": "siSwati",
+    "ve": "Tshivenda",
+    "ts": "Xitsonga",
+    "nr": "isiNdebele"
+  },
+  "landing": {
+    "hero": {
+      "title": "Smart Insurance for South African Farmers",
+      "subtitle": "Protect your crops and livestock with AI-powered coverage. Get instant payouts when weather hits.",
+      "signUp": "Sign Up Now",
+      "login": "Login",
+      "ussd": "Or dial *120*4827# on any phone"
+    },
+    "features": {
+      "title": "Why Choose InsurAgri?",
+      "smartProtection": {
+        "title": "Smart Crop Protection",
+        "description": "AI monitors weather patterns and automatically triggers payouts when thresholds are met."
+      },
+      "mobileClaims": {
+        "title": "Mobile-First Claims",
+        "description": "File claims instantly through our app or USSD. No paperwork, no waiting."
+      },
+      "instantPayouts": {
+        "title": "Instant Payouts",
+        "description": "Get compensation within 48 hours directly to your mobile money wallet."
+      },
+      "community": {
+        "title": "Farmer Community",
+        "description": "Connect with other farmers, share knowledge, and access agricultural resources."
+      }
+    },
+    "trust": {
+      "title": "Trusted by 10,000+ Farmers",
+      "subtitle": "Join thousands of South African farmers who protect their livelihoods with InsurAgri."
+    },
+    "cta": {
+      "title": "Get Started Today",
+      "subtitle": "Protect your farm with smart insurance designed for South African agriculture.",
+      "button": "Sign Up Now"
+    }
+  },
+  "learn": {
+    "title": "Learning Center",
+    "subtitle": "Access farming guides, best practices, and agricultural knowledge to improve your farming success.",
+    "search": "Search learning resources...",
+    "featured": "Featured",
+    "featuredContent": {
+      "title": "Drought Preparation Strategies",
+      "description": "Essential techniques for preparing your farm for dry seasons"
+    },
+    "categories": {
+      "cropGuides": "Crop Guides",
+      "livestockCare": "Livestock Care",
+      "howToVideos": "How-to Videos",
+      "faqs": "Frequently Asked Questions"
+    },
+    "viewAll": "View All",
+    "viewAllVideos": "View All Videos",
+    "viewAllFaqs": "View All FAQs",
+    "readTime": "{{minutes}} min read",
+    "duration": "{{minutes}} min"
+  },
+  "auth": {
+    "emailVerification": {
+      "title": "Email Verification Required",
+      "message": "Please verify your email address before completing your registration.",
+      "resend": "Resend Verification Email",
+      "checkAgain": "Check Again",
+      "sent": "Verification email sent successfully!",
+      "error": "Failed to send verification email. Please try again."
+    },
+    "register": {
+      "success": "Registration successful! Please check your email to verify your account.",
+      "emailExists": "An account with this email already exists. Please use a different email or try logging in."
+    }
+  }
+}

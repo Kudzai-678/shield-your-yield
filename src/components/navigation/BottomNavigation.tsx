@@ -1,16 +1,18 @@
 import { Home, Shield, Sprout, GraduationCap, Wallet } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
-const navItems = [
-  { icon: Home, label: 'Home', path: '/dashboard' },
-  { icon: Shield, label: 'Cover', path: '/cover' },
-  { icon: Sprout, label: 'Farm', path: '/farm' },
-  { icon: GraduationCap, label: 'Learn', path: '/learn' },
-  { icon: Wallet, label: 'Wallet', path: '/wallet' },
-];
-
 export const BottomNavigation = () => {
+  const { t } = useTranslation();
+  
+  const navItems = [
+    { icon: Home, label: t('navigation.home'), path: '/dashboard' },
+    { icon: Shield, label: t('navigation.cover'), path: '/cover' },
+    { icon: Sprout, label: t('navigation.farm'), path: '/farm' },
+    { icon: GraduationCap, label: t('navigation.learn'), path: '/learn' },
+    { icon: Wallet, label: t('navigation.wallet'), path: '/wallet' },
+  ];
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border">
       <div className="flex items-center justify-around py-1 sm:py-2 px-1">

@@ -1,0 +1,109 @@
+{
+  "app": {
+    "name": "InsurAgri",
+    "tagline": "I-Inshurensi Ekrelekrele Yamafama AseMzantsi Afrika"
+  },
+  "navigation": {
+    "home": "Ekhaya",
+    "cover": "Isigqubuthelo",
+    "farm": "Ifama",
+    "learn": "Funda",
+    "wallet": "Isipaji"
+  },
+  "settings": {
+    "title": "Iisetingi",
+    "profile": "Iprofayile",
+    "appearance": "Inkangeleko Ye-App",
+    "notifications": "Izaziso Zokutyhala",
+    "language": "Ulwimi",
+    "logout": "Phuma",
+    "logoutConfirm": "Uqinisekile ukuba ufuna ukuphuma?",
+    "logoutDescription": "Uya kuxhuzulwa kwiphepha lokuqala kwaye kuya kufuneka ungene kwakhona ukuze ufikelele kwi-akhawunti yakho.",
+    "cancel": "Rhoxisa"
+  },
+  "languages": {
+    "en": "IsiNgesi",
+    "af": "IsiBhulu",
+    "zu": "isiZulu",
+    "xh": "isiXhosa",
+    "nso": "Sepedi",
+    "st": "Sesotho",
+    "tn": "Setswana",
+    "ss": "siSwati",
+    "ve": "Tshivenda",
+    "ts": "Xitsonga",
+    "nr": "isiNdebele"
+  },
+  "landing": {
+    "hero": {
+      "title": "I-Inshurensi Ekrelekrele Yamafama AseMzantsi Afrika",
+      "subtitle": "Khusela izityalo nezilwanyana zakho ngesigqubuthelo esikhokhelwa yi-AI. Fumana iintlawulo ngokukhawuleza xa imozulu ibetha.",
+      "signUp": "Bhalisa Ngoku",
+      "login": "Ngena",
+      "ussd": "Okanye dayela *120*4827# nakweyiphi na ifowuni"
+    },
+    "features": {
+      "title": "Kutheni Ukhetha InsurAgri?",
+      "smartProtection": {
+        "title": "Ukukhuselwa Kwezityalo Okukrelekrele",
+        "description": "I-AI ijonga iipateni zemozulu kwaye ngokuzenzekelayo iqalisa iintlawulo xa imigangatho ifezekile."
+      },
+      "mobileClaims": {
+        "title": "Amabango Efowuni Kuqala",
+        "description": "Faka amabango ngokukhawuleza nge-app yethu okanye i-USSD. Akukho maphepha, akukho kulinda."
+      },
+      "instantPayouts": {
+        "title": "Iintlawulo Ngokukhawuleza",
+        "description": "Fumana imbuyekezo kwiiyure ezingama-48 ngokuthe ngqo kwisipaji sakho semali yefowuni."
+      },
+      "community": {
+        "title": "Uluntu Lwamafama",
+        "description": "Nxibelelana namanye amafama, yabelana ngolwazi, kwaye ufikelele kwizixhobo zezolimo."
+      }
+    },
+    "trust": {
+      "title": "Ithenjwa Ngamafama Angaphezu kwe-10,000+",
+      "subtitle": "Joyina amawaka amafama aseMzantsi Afrika akhusela ubomi bawo nge-InsurAgri."
+    },
+    "cta": {
+      "title": "Qala Namhlanje",
+      "subtitle": "Khusela ifama yakho nge-inshurensi ekrelekrele eyenzelwe ezolimo zaseMzantsi Afrika.",
+      "button": "Bhalisa Ngoku"
+    }
+  },
+  "learn": {
+    "title": "Iziko Lokufunda",
+    "subtitle": "Fikelela kwizikhokelo zokufama, iindlela ezintle kakhulu, nolwazi lwezolimo ukuphucula impumelelo yakho yokufama.",
+    "search": "Khangela izixhobo zokufunda...",
+    "featured": "Okubalaseleyo",
+    "featuredContent": {
+      "title": "Izicwangciso Zokulungiselela Imbalela",
+      "description": "Ubuchule obubalulekileyo bokucwangcisa ifama yakho ngamaxesha omileyo"
+    },
+    "categories": {
+      "cropGuides": "Izikhokelo Zezityalo",
+      "livestockCare": "Unkhathalelo Lweemfuyo",
+      "howToVideos": "Iividiyo Zendlela Yokwenza",
+      "faqs": "Imibuzo Edla Ngokubuzwa"
+    },
+    "viewAll": "Jonga Konke",
+    "viewAllVideos": "Jonga Onke Iividiyo",
+    "viewAllFaqs": "Jonga Yonke Imibuzo",
+    "readTime": "{{minutes}} imiz yokufunda",
+    "duration": "{{minutes}} imiz"
+  },
+  "auth": {
+    "emailVerification": {
+      "title": "Ukuqinisekiswa Kwe-imeyile Kuyafuneka",
+      "message": "Nceda uqinisekise idilesi ye-imeyile yakho ngaphambi kokugqiba ukubhalisa kwakho.",
+      "resend": "Thumela Kwakhona I-imeyile Yokuqinisekisa",
+      "checkAgain": "Jonga Kwakhona",
+      "sent": "I-imeyile yokuqinisekisa ithunyelwe ngempumelelo!",
+      "error": "Ayikwazanga ukuthumela i-imeyile yokuqinisekisa. Nceda uzame kwakhona."
+    },
+    "register": {
+      "success": "Ukubhalisa kuphumelele! Nceda ujjonge i-imeyile yakho ukuze uqinisekise i-akhawunti yakho.",
+      "emailExists": "I-akhawunti enale imeyile sele ikho. Nceda usebenzise imeyile eyahlukileyo okanye uzame ukungena."
+    }
+  }
+}

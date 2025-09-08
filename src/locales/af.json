@@ -1,0 +1,109 @@
+{
+  "app": {
+    "name": "InsurAgri",
+    "tagline": "Slim Versekering vir Suid-Afrikaanse Boere"
+  },
+  "navigation": {
+    "home": "Tuis",
+    "cover": "Dekking",
+    "farm": "Plaas",
+    "learn": "Leer",
+    "wallet": "Beursie"
+  },
+  "settings": {
+    "title": "Instellings",
+    "profile": "Profiel",
+    "appearance": "App Voorkoms",
+    "notifications": "Stoot Kennisgewings",
+    "language": "Taal",
+    "logout": "Teken Uit",
+    "logoutConfirm": "Is jy seker jy wil uitteken?",
+    "logoutDescription": "Jy sal na die tuisblad geherlei word en sal weer moet inteken om toegang te kry tot jou rekening.",
+    "cancel": "Kanselleer"
+  },
+  "languages": {
+    "en": "Engels",
+    "af": "Afrikaans",
+    "zu": "isiZulu",
+    "xh": "isiXhosa",
+    "nso": "Sepedi",
+    "st": "Sesotho",
+    "tn": "Setswana",
+    "ss": "siSwati",
+    "ve": "Tshivenda",
+    "ts": "Xitsonga",
+    "nr": "isiNdebele"
+  },
+  "landing": {
+    "hero": {
+      "title": "Slim Versekering vir Suid-Afrikaanse Boere",
+      "subtitle": "Beskerm jou gewasse en vee met KI-aangedrewe dekking. Kry onmiddellike uitbetalings wanneer weer toeslaan.",
+      "signUp": "Registreer Nou",
+      "login": "Teken In",
+      "ussd": "Of skakel *120*4827# op enige foon"
+    },
+    "features": {
+      "title": "Waarom InsurAgri Kies?",
+      "smartProtection": {
+        "title": "Slim Gewas Beskerming",
+        "description": "KI monitor weerpatrone en aktiveer outomaties uitbetalings wanneer drempels bereik word."
+      },
+      "mobileClaims": {
+        "title": "Mobiel-Eerste Eise",
+        "description": "Lê eise onmiddellik in deur ons app of USSD. Geen papierwerk, geen wag nie."
+      },
+      "instantPayouts": {
+        "title": "Onmiddellike Uitbetalings",
+        "description": "Kry vergoeding binne 48 uur direk na jou mobiele geld beursie."
+      },
+      "community": {
+        "title": "Boer Gemeenskap",
+        "description": "Verbind met ander boere, deel kennis, en kry toegang tot landbou hulpbronne."
+      }
+    },
+    "trust": {
+      "title": "Vertrou deur 10,000+ Boere",
+      "subtitle": "Sluit aan by duisende Suid-Afrikaanse boere wat hul bestaan beskerm met InsurAgri."
+    },
+    "cta": {
+      "title": "Begin Vandag",
+      "subtitle": "Beskerm jou plaas met slim versekering ontwerp vir Suid-Afrikaanse landbou.",
+      "button": "Registreer Nou"
+    }
+  },
+  "learn": {
+    "title": "Leer Sentrum",
+    "subtitle": "Kry toegang tot boerdery gidse, beste praktyke, en landbou kennis om jou boerdery sukses te verbeter.",
+    "search": "Soek leer hulpbronne...",
+    "featured": "Uitgelig",
+    "featuredContent": {
+      "title": "Droogte Voorbereidings Strategieë",
+      "description": "Noodsaaklike tegnieke om jou plaas voor te berei vir droë seisoene"
+    },
+    "categories": {
+      "cropGuides": "Gewas Gidse",
+      "livestockCare": "Veesorg",
+      "howToVideos": "Hoe-om Video's",
+      "faqs": "Gereelde Vrae"
+    },
+    "viewAll": "Sien Alles",
+    "viewAllVideos": "Sien Alle Video's",
+    "viewAllFaqs": "Sien Alle Vrae",
+    "readTime": "{{minutes}} min lees",
+    "duration": "{{minutes}} min"
+  },
+  "auth": {
+    "emailVerification": {
+      "title": "E-pos Verifikasie Vereis",
+      "message": "Verifieer asseblief jou e-pos adres voordat jy jou registrasie voltooi.",
+      "resend": "Stuur Verifikasie E-pos Weer",
+      "checkAgain": "Kyk Weer",
+      "sent": "Verifikasie e-pos suksesvol gestuur!",
+      "error": "Kon nie verifikasie e-pos stuur nie. Probeer asseblief weer."
+    },
+    "register": {
+      "success": "Registrasie suksesvol! Kyk asseblief jou e-pos om jou rekening te verifieer.",
+      "emailExists": "'n Rekening met hierdie e-pos bestaan reeds. Gebruik asseblief 'n ander e-pos of probeer inteken."
+    }
+  }
+}
