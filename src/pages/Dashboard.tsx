@@ -2,10 +2,19 @@ import { CreditCard, FileText, Plus, Cloud, AlertTriangle, Trophy } from 'lucide
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
 import heroImage from '@/assets/hero-farming.jpg';
 
 export const Dashboard = () => {
-  // Dashboard component for authenticated users
+  const { profile } = useAuth();
+  
+  const getWelcomeMessage = () => {
+    if (profile?.first_name && profile?.last_name) {
+      return `Welcome, ${profile.first_name} ${profile.last_name}`;
+    }
+    return 'Welcome, User';
+  };
+
   return (
     <div className="p-4 space-y-6">
       {/* Hero Section */}
@@ -18,7 +27,7 @@ export const Dashboard = () => {
           />
         </div>
         <CardContent className="relative p-6">
-          <h2 className="text-xl font-bold mb-2">Welcome, John Mthembu</h2>
+          <h2 className="text-xl font-bold mb-2">{getWelcomeMessage()}</h2>
           <p className="text-primary-foreground/90 mb-4">Protect your crops and livestock with smart insurance</p>
           <Button variant="secondary" size="mobile">
             Get Started
