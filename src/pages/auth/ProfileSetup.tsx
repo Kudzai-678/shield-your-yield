@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,9 +12,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { UserPlus, MapPin, Tractor, ArrowLeft } from "lucide-react";
+import { UserPlus, MapPin, Tractor, ArrowLeft, Mail, RefreshCw } from "lucide-react";
 
 const profileSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -30,6 +31,10 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 
 export function ProfileSetup() {
   const [isLoading, setIsLoading] = useState(false);
+  const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [resendingEmail, setResendingEmail] = useState(false);
   const navigate = useNavigate();
 
   const form = useForm<ProfileFormData>({
@@ -63,7 +68,87 @@ export function ProfileSetup() {
     { id: "liability", label: "Farm Liability" },
   ];
 
+  // Check email verification status on component mount
+  useEffect(() => {
+    const checkEmailVerification = async () => {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        
+        if (error || !user) {
+          navigate('/auth/login');
+          return;
+        }
+
+        setUserEmail(user.email || "");
+        
+        // Check if email is verified
+        const isVerified = !!user.email_confirmed_at;
+        setEmailVerified(isVerified);
+        
+        if (!isVerified) {
+          setShowVerificationModal(true);
+        }
+      } catch (error) {
+        console.error('Error checking email verification:', error);
+        navigate('/auth/login');
+      }
+    };
+
+    checkEmailVerification();
+  }, [navigate]);
+
+  const handleResendVerification = async () => {
+    setResendingEmail(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: userEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/profile-setup`
+        }
+      });
+
+      if (error) {
+        toast.error('Failed to resend verification email');
+      } else {
+        toast.success('Verification email sent!');
+      }
+    } catch (error) {
+      toast.error('Failed to resend verification email');
+    } finally {
+      setResendingEmail(false);
+    }
+  };
+
+  const handleCheckVerification = async () => {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      
+      if (error || !user) {
+        return;
+      }
+
+      const isVerified = !!user.email_confirmed_at;
+      setEmailVerified(isVerified);
+      
+      if (isVerified) {
+        setShowVerificationModal(false);
+        toast.success('Email verified successfully!');
+      } else {
+        toast.error('Email not yet verified. Please check your inbox.');
+      }
+    } catch (error) {
+      toast.error('Failed to check verification status');
+    }
+  };
+
   const onSubmit = async (data: ProfileFormData) => {
+    // Block submission if email is not verified
+    if (!emailVerified) {
+      setShowVerificationModal(true);
+      return;
+    }
+
     setIsLoading(true);
     
     try {
@@ -323,7 +408,7 @@ export function ProfileSetup() {
 
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || !emailVerified}
                 className="w-full h-12 text-lg"
                 size="lg"
               >
@@ -332,6 +417,55 @@ export function ProfileSetup() {
             </form>
           </Form>
         </CardContent>
+
+        {/* Email Verification Modal */}
+        <Dialog open={showVerificationModal} onOpenChange={() => {}}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Mail className="w-5 h-5" />
+                Email Verification Required
+              </DialogTitle>
+              <DialogDescription>
+                Please verify your email address before completing your profile.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <Alert>
+                <Mail className="h-4 w-4" />
+                <AlertDescription>
+                  A verification email has been sent to <strong>{userEmail}</strong>. 
+                  Please check your inbox and click the verification link.
+                </AlertDescription>
+              </Alert>
+              
+              <div className="flex flex-col gap-2">
+                <Button 
+                  onClick={handleCheckVerification}
+                  variant="default"
+                  className="w-full"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  I've Verified - Check Status
+                </Button>
+                
+                <Button 
+                  onClick={handleResendVerification}
+                  variant="outline"
+                  disabled={resendingEmail}
+                  className="w-full"
+                >
+                  {resendingEmail ? "Sending..." : "Resend Verification Email"}
+                </Button>
+              </div>
+              
+              <p className="text-xs text-muted-foreground text-center">
+                Check your spam folder if you don't see the email in your inbox.
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
       </Card>
     </div>
   );

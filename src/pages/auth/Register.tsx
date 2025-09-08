@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Leaf, ArrowLeft, AlertCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Leaf, ArrowLeft, AlertCircle, Mail, CheckCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -16,7 +17,8 @@ export const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [duplicateEmailError, setDuplicateEmailError] = useState(false);
+  const [showEmailSentModal, setShowEmailSentModal] = useState(false);
+  const [showDuplicateEmailModal, setShowDuplicateEmailModal] = useState(false);
   const navigate = useNavigate();
   const { signUp, user } = useAuth();
 
@@ -34,7 +36,7 @@ export const Register = () => {
     }
 
     setLoading(true);
-    setDuplicateEmailError(false);
+    setShowDuplicateEmailModal(false);
     
     const { error } = await signUp(email, password, {
       first_name: firstName,
@@ -42,12 +44,21 @@ export const Register = () => {
     });
 
     if (error && error.message.includes('account with this email already exists')) {
-      setDuplicateEmailError(true);
+      setShowDuplicateEmailModal(true);
     } else if (!error) {
-      navigate('/auth/profile-setup');
+      setShowEmailSentModal(true);
     }
     
     setLoading(false);
+  };
+
+  const handleCloseEmailSentModal = () => {
+    setShowEmailSentModal(false);
+    // Keep user on registration page - don't navigate
+  };
+
+  const handleCloseDuplicateEmailModal = () => {
+    setShowDuplicateEmailModal(false);
   };
 
   return (
@@ -151,18 +162,6 @@ export const Register = () => {
                 <p className="text-sm text-destructive">Passwords do not match</p>
               )}
 
-              {duplicateEmailError && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    An account with this email already exists.{' '}
-                    <Link to="/auth/login" className="underline font-medium">
-                      Sign in here
-                    </Link>{' '}
-                    or use a different email address.
-                  </AlertDescription>
-                </Alert>
-              )}
 
               <Button 
                 type="submit"
@@ -194,6 +193,79 @@ export const Register = () => {
             <p className="font-mono text-lg">*123*456#</p>
           </CardContent>
         </Card>
+
+        {/* Email Sent Modal */}
+        <Dialog open={showEmailSentModal} onOpenChange={handleCloseEmailSentModal}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-green-600" />
+                Email Confirmation Sent
+              </DialogTitle>
+              <DialogDescription>
+                Please check your email to verify your account before proceeding.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <Alert>
+                <Mail className="h-4 w-4" />
+                <AlertDescription>
+                  A verification email has been sent to <strong>{email}</strong>. 
+                  Click the link in the email to verify your account, then you can complete your profile.
+                </AlertDescription>
+              </Alert>
+              
+              <Button onClick={handleCloseEmailSentModal} className="w-full">
+                Okay
+              </Button>
+              
+              <p className="text-xs text-muted-foreground text-center">
+                Check your spam folder if you don't see the email in your inbox.
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Duplicate Email Modal */}
+        <Dialog open={showDuplicateEmailModal} onOpenChange={handleCloseDuplicateEmailModal}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-destructive" />
+                Email Address Already Exists
+              </DialogTitle>
+              <DialogDescription>
+                An account with this email address is already registered.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  The email address <strong>{email}</strong> is already associated with an account.
+                </AlertDescription>
+              </Alert>
+              
+              <div className="flex flex-col gap-2">
+                <Button asChild className="w-full">
+                  <Link to="/auth/login">
+                    Sign In Instead
+                  </Link>
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  onClick={handleCloseDuplicateEmailModal}
+                  className="w-full"
+                >
+                  Try Different Email
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
