@@ -20,7 +20,6 @@ import { PhoneRegistration } from "./pages/auth/PhoneRegistration";
 import { OTPVerification } from "./pages/auth/OTPVerification";
 import { ProfileSetup } from "./pages/auth/ProfileSetup";
 import { RegistrationSuccess } from "./pages/auth/RegistrationSuccess";
-import { EmailConfirmation } from "./pages/auth/EmailConfirmation";
 import NotFound from "./pages/NotFound";
 import "./index.css";
 
@@ -51,7 +50,6 @@ const App = () => {
             <Route path="/auth/register" element={<Register />} />
             <Route path="/auth/phone-registration" element={<PhoneRegistration />} />
             <Route path="/auth/verify" element={<OTPVerification />} />
-            <Route path="/auth/email-confirmation" element={<EmailConfirmation />} />
             <Route path="/auth/profile-setup" element={<ProfileSetup />} />
             <Route path="/auth/success" element={<RegistrationSuccess />} />
             
