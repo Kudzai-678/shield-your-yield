@@ -86,7 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string, metadata?: any) => {
     const redirectUrl = `${window.location.origin}/auth/profile-setup`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -97,11 +97,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     if (error) {
       toast.error(error.message);
-    } else {
-      toast.success('Check your email for the confirmation link!');
+      return { error };
     }
     
-    return { error };
+    // Check if user data is missing despite no error (indicates existing email)
+    if (!data.user) {
+      const duplicateError = new Error('An account with this email already exists. Please sign in instead.');
+      toast.error(duplicateError.message);
+      return { error: duplicateError };
+    }
+    
+    toast.success('Check your email for the confirmation link!');
+    return { error: null };
   };
 
   const signIn = async (email: string, password: string) => {

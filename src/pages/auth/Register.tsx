@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { Leaf, ArrowLeft } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Leaf, ArrowLeft, AlertCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -15,6 +16,7 @@ export const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [duplicateEmailError, setDuplicateEmailError] = useState(false);
   const navigate = useNavigate();
   const { signUp, user } = useAuth();
 
@@ -32,13 +34,16 @@ export const Register = () => {
     }
 
     setLoading(true);
+    setDuplicateEmailError(false);
     
     const { error } = await signUp(email, password, {
       first_name: firstName,
       last_name: lastName
     });
 
-    if (!error) {
+    if (error && error.message.includes('account with this email already exists')) {
+      setDuplicateEmailError(true);
+    } else if (!error) {
       navigate('/auth/profile-setup');
     }
     
@@ -144,6 +149,19 @@ export const Register = () => {
 
               {password !== confirmPassword && confirmPassword && (
                 <p className="text-sm text-destructive">Passwords do not match</p>
+              )}
+
+              {duplicateEmailError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    An account with this email already exists.{' '}
+                    <Link to="/auth/login" className="underline font-medium">
+                      Sign in here
+                    </Link>{' '}
+                    or use a different email address.
+                  </AlertDescription>
+                </Alert>
               )}
 
               <Button 
