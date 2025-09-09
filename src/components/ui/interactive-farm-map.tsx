@@ -4,6 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { MapboxTokenManager } from '@/components/ui/mapbox-token-manager';
 import { 
   Maximize2, 
   MapPin, 
@@ -11,9 +12,12 @@ import {
   Navigation, 
   Crosshair,
   Map as MapIcon,
-  Mountain
+  Mountain,
+  Settings,
+  AlertTriangle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 // Farm coordinates (KwaZulu-Natal, Msinga)
 const FARM_LAT = -28.7282;
@@ -35,8 +39,15 @@ interface InteractiveFarmMapProps {
   className?: string;
 }
 
-// Temporary token for development - replace with your actual token
-const MAPBOX_TOKEN = 'pk.eyJ1IjoibG92YWJsZS1kZW1vIiwiYSI6ImNtM3lzNml0djBhZXkyanMyb3NhOXl6N2sifQ.z8HbKSgI9rQk2fLg8Wt5hA';
+// Token management functions
+const getMapboxToken = (): string | null => {
+  // First check localStorage
+  const localToken = localStorage.getItem('mapbox_token');
+  if (localToken) return localToken;
+  
+  // Could add Supabase secrets check here in the future
+  return null;
+};
 
 export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({ 
   isCompact = false, 
@@ -49,6 +60,9 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
   const [clickedLocation, setClickedLocation] = useState<[number, number] | null>(null);
   const [mapStyle, setMapStyle] = useState<'satellite' | 'streets' | 'terrain'>('satellite');
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [mapboxToken, setMapboxToken] = useState<string | null>(null);
+  const [showTokenManager, setShowTokenManager] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
 
   const mapStyles = {
     satellite: 'mapbox://styles/mapbox/satellite-v9',
@@ -56,10 +70,22 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
     terrain: 'mapbox://styles/mapbox/outdoors-v12'
   };
 
+  // Check for token on component mount
   useEffect(() => {
-    if (!mapContainer.current) return;
+    const token = getMapboxToken();
+    if (token) {
+      setMapboxToken(token);
+    } else {
+      setShowTokenManager(true);
+    }
+  }, []);
 
-    mapboxgl.accessToken = MAPBOX_TOKEN;
+  // Initialize map when token is available
+  useEffect(() => {
+    if (!mapContainer.current || !mapboxToken) return;
+
+    setMapError(null);
+    mapboxgl.accessToken = mapboxToken;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -74,6 +100,12 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
     map.current.on('load', () => {
       setMapLoaded(true);
       addFarmMarkers();
+    });
+
+    map.current.on('error', (e) => {
+      console.error('Mapbox error:', e);
+      setMapError('Failed to load map. Please check your token.');
+      setMapLoaded(false);
     });
 
     map.current.on('click', (e) => {
@@ -101,7 +133,7 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
         map.current.remove();
       }
     };
-  }, [isCompact, mapStyle]);
+  }, [isCompact, mapStyle, mapboxToken]);
 
   const addFarmMarkers = () => {
     if (!map.current) return;
@@ -181,96 +213,200 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
     }
   };
 
-  const CompactMap = () => (
-    <div className="relative cursor-pointer group h-48 w-full rounded-lg overflow-hidden">
-      <div ref={mapContainer} className="w-full h-full" />
-      {!mapLoaded && (
-        <div className="absolute inset-0 bg-muted/50 flex items-center justify-center">
-          <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
+  const CompactMap = () => {
+    if (!mapboxToken) {
+      return (
+        <div className="h-48 w-full rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center bg-muted/20">
+          <div className="text-center space-y-2">
+            <AlertTriangle className="w-8 h-8 text-muted-foreground mx-auto" />
+            <p className="text-sm text-muted-foreground">Mapbox token required</p>
+            <Button size="sm" onClick={() => setShowTokenManager(true)}>
+              <Settings className="w-4 h-4 mr-2" />
+              Configure Token
+            </Button>
+          </div>
         </div>
-      )}
-      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-center justify-center">
-        <Button
-          variant="secondary"
-          size="sm"
-          className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-        >
-          <Maximize2 className="w-4 h-4 mr-2" />
-          View Full Map
-        </Button>
-      </div>
-    </div>
-  );
+      );
+    }
 
-  const FullScreenMap = () => (
-    <div className="relative w-full h-[70vh] rounded-lg overflow-hidden">
-      <div ref={mapContainer} className="w-full h-full" />
-      
-      {/* Map Controls */}
-      <div className="absolute top-4 right-4 space-y-2">
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={toggleMapStyle}
-          title={`Switch to ${mapStyle === 'satellite' ? 'streets' : mapStyle === 'streets' ? 'terrain' : 'satellite'}`}
-        >
-          {mapStyle === 'satellite' ? <MapIcon className="w-4 h-4" /> : 
-           mapStyle === 'streets' ? <Mountain className="w-4 h-4" /> : 
-           <Satellite className="w-4 h-4" />}
-        </Button>
-        
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={locateUser}
-          title="Find my location"
-        >
-          <Crosshair className="w-4 h-4" />
-        </Button>
+    return (
+      <div className="relative cursor-pointer group h-48 w-full rounded-lg overflow-hidden">
+        <div ref={mapContainer} className="w-full h-full" />
+        {mapError && (
+          <div className="absolute inset-0 bg-destructive/10 flex items-center justify-center">
+            <Alert className="max-w-xs">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>{mapError}</AlertDescription>
+            </Alert>
+          </div>
+        )}
+        {!mapLoaded && !mapError && (
+          <div className="absolute inset-0 bg-muted/50 flex items-center justify-center">
+            <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
+          </div>
+        )}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-center justify-center">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          >
+            <Maximize2 className="w-4 h-4 mr-2" />
+            View Full Map
+          </Button>
+        </div>
       </div>
+    );
+  };
 
-      {/* Legend */}
-      <div className="absolute bottom-4 left-4 bg-background/90 backdrop-blur-sm rounded-lg p-3 space-y-2 max-w-xs">
-        <h4 className="font-semibold text-sm">Farm Assets</h4>
-        <div className="grid grid-cols-2 gap-1 text-xs">
-          {farmAssets.slice(0, 4).map((asset) => (
-            <div key={asset.id} className="flex items-center gap-2">
-              <div 
-                className="w-3 h-3 rounded-full border border-white" 
-                style={{ backgroundColor: asset.color }}
-              />
-              <span className="truncate">{asset.name}</span>
+  const FullScreenMap = () => {
+    if (!mapboxToken) {
+      return (
+        <div className="w-full h-[70vh] rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center bg-muted/20">
+          <div className="text-center space-y-4">
+            <AlertTriangle className="w-12 h-12 text-muted-foreground mx-auto" />
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Mapbox Token Required</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Please configure your Mapbox public token to enable map functionality
+              </p>
+              <Button onClick={() => setShowTokenManager(true)}>
+                <Settings className="w-4 h-4 mr-2" />
+                Configure Token
+              </Button>
             </div>
-          ))}
+          </div>
         </div>
-      </div>
+      );
+    }
 
-      {!mapLoaded && (
-        <div className="absolute inset-0 bg-muted/50 flex items-center justify-center">
-          <div className="animate-spin w-8 h-8 border-3 border-primary border-t-transparent rounded-full" />
+    return (
+      <div className="relative w-full h-[70vh] rounded-lg overflow-hidden">
+        <div ref={mapContainer} className="w-full h-full" />
+        
+        {/* Map Controls */}
+        <div className="absolute top-4 right-4 space-y-2">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setShowTokenManager(true)}
+            title="Manage Mapbox token"
+          >
+            <Settings className="w-4 h-4" />
+          </Button>
+          
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={toggleMapStyle}
+            title={`Switch to ${mapStyle === 'satellite' ? 'streets' : mapStyle === 'streets' ? 'terrain' : 'satellite'}`}
+            disabled={!mapLoaded}
+          >
+            {mapStyle === 'satellite' ? <MapIcon className="w-4 h-4" /> : 
+             mapStyle === 'streets' ? <Mountain className="w-4 h-4" /> : 
+             <Satellite className="w-4 h-4" />}
+          </Button>
+          
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={locateUser}
+            title="Find my location"
+            disabled={!mapLoaded}
+          >
+            <Crosshair className="w-4 h-4" />
+          </Button>
         </div>
-      )}
-    </div>
-  );
+
+        {/* Legend */}
+        <div className="absolute bottom-4 left-4 bg-background/90 backdrop-blur-sm rounded-lg p-3 space-y-2 max-w-xs">
+          <h4 className="font-semibold text-sm">Farm Assets</h4>
+          <div className="grid grid-cols-2 gap-1 text-xs">
+            {farmAssets.slice(0, 4).map((asset) => (
+              <div key={asset.id} className="flex items-center gap-2">
+                <div 
+                  className="w-3 h-3 rounded-full border border-white" 
+                  style={{ backgroundColor: asset.color }}
+                />
+                <span className="truncate">{asset.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {mapError && (
+          <div className="absolute inset-0 bg-destructive/10 flex items-center justify-center">
+            <Alert className="max-w-md">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>{mapError}</AlertDescription>
+            </Alert>
+          </div>
+        )}
+
+        {!mapLoaded && !mapError && (
+          <div className="absolute inset-0 bg-muted/50 flex items-center justify-center">
+            <div className="animate-spin w-8 h-8 border-3 border-primary border-t-transparent rounded-full" />
+          </div>
+        )}
+      </div>
+    );
+  };
 
   if (isCompact) {
     return (
-      <Dialog open={isFullScreen} onOpenChange={setIsFullScreen}>
-        <DialogTrigger asChild>
-          <div onClick={() => setIsFullScreen(true)}>
-            <CompactMap />
-          </div>
-        </DialogTrigger>
-        <DialogContent className="max-w-4xl w-full h-[80vh]">
-          <DialogTitle className="sr-only">Interactive Farm Map</DialogTitle>
-          <DialogDescription className="sr-only">
-            View and interact with the farm location map. Click to place pins and use location services.
-          </DialogDescription>
-          <FullScreenMap />
-        </DialogContent>
-      </Dialog>
+      <>
+        <Dialog open={isFullScreen} onOpenChange={setIsFullScreen}>
+          <DialogTrigger asChild>
+            <div onClick={() => !showTokenManager && setIsFullScreen(true)}>
+              <CompactMap />
+            </div>
+          </DialogTrigger>
+          <DialogContent className="max-w-4xl w-full h-[80vh]">
+            <DialogTitle className="sr-only">Interactive Farm Map</DialogTitle>
+            <DialogDescription className="sr-only">
+              View and interact with the farm location map. Click to place pins and use location services.
+            </DialogDescription>
+            <FullScreenMap />
+          </DialogContent>
+        </Dialog>
+        
+        <Dialog open={showTokenManager} onOpenChange={setShowTokenManager}>
+          <DialogContent className="max-w-md">
+            <DialogTitle className="sr-only">Mapbox Token Configuration</DialogTitle>
+            <DialogDescription className="sr-only">
+              Configure your Mapbox public token to enable map functionality.
+            </DialogDescription>
+            <MapboxTokenManager
+              currentToken={mapboxToken || undefined}
+              onTokenValidated={(token) => {
+                setMapboxToken(token);
+                setShowTokenManager(false);
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      </>
     );
   }
 
-  return <FullScreenMap />;
+  return (
+    <>
+      <FullScreenMap />
+      <Dialog open={showTokenManager} onOpenChange={setShowTokenManager}>
+        <DialogContent className="max-w-md">
+          <DialogTitle className="sr-only">Mapbox Token Configuration</DialogTitle>
+          <DialogDescription className="sr-only">
+            Configure your Mapbox public token to enable map functionality.
+          </DialogDescription>
+          <MapboxTokenManager
+            currentToken={mapboxToken || undefined}
+            onTokenValidated={(token) => {
+              setMapboxToken(token);
+              setShowTokenManager(false);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 };
