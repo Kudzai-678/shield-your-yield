@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Button } from '@/components/ui/button';
@@ -42,20 +42,14 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
   isCompact = false, 
   className = '' 
 }) => {
-  // Separate refs for compact and full-screen maps to avoid conflicts
-  const compactMapContainer = useRef<HTMLDivElement>(null);
-  const fullScreenMapContainer = useRef<HTMLDivElement>(null);
-  const compactMap = useRef<mapboxgl.Map | null>(null);
-  const fullScreenMap = useRef<mapboxgl.Map | null>(null);
-  
-  const [compactMapLoaded, setCompactMapLoaded] = useState(false);
-  const [fullScreenMapLoaded, setFullScreenMapLoaded] = useState(false);
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [clickedLocation, setClickedLocation] = useState<[number, number] | null>(null);
   const [mapStyle, setMapStyle] = useState<'satellite' | 'streets' | 'terrain'>('satellite');
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
-  const [isInitializing, setIsInitializing] = useState(false);
 
   const mapStyles = {
     satellite: 'mapbox://styles/mapbox/satellite-v9',
@@ -63,133 +57,58 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
     terrain: 'mapbox://styles/mapbox/outdoors-v12'
   };
 
-  const getMapboxToken = useCallback(async (): Promise<string | null> => {
+  const getMapboxToken = async (): Promise<string | null> => {
     try {
-      console.log('🗺️ Fetching Mapbox token...');
       const { data, error } = await supabase.functions.invoke('get-mapbox-token');
       
       if (error) {
-        console.error('❌ Error fetching Mapbox token:', error);
+        console.error('Error fetching Mapbox token:', error);
         setMapError('Failed to load map configuration');
         return null;
       }
       
-      const token = data?.token;
-      if (!token) {
-        console.error('❌ No token received from function');
-        setMapError('No map token received');
-        return null;
-      }
-
-      // Validate token format
-      if (!token.startsWith('pk.')) {
-        console.error('❌ Invalid token format:', token.substring(0, 10) + '...');
-        setMapError('Invalid map token format');
-        return null;
-      }
-
-      console.log('✅ Mapbox token retrieved successfully:', token.substring(0, 15) + '...');
-      return token;
+      return data?.token || null;
     } catch (error) {
-      console.error('❌ Error calling token function:', error);
+      console.error('Error calling token function:', error);
       setMapError('Unable to connect to map service');
       return null;
     }
-  }, []);
+  };
 
-  const addFarmMarkers = useCallback((mapInstance: mapboxgl.Map) => {
-    if (!mapInstance) {
-      console.log('❌ No map instance provided for markers');
-      return;
-    }
+  // Initialize map on component mount
+  useEffect(() => {
+    if (!mapContainer.current || mapLoaded) return;
 
-    console.log('📍 Adding farm markers...');
-    farmAssets.forEach((asset) => {
-      try {
-        const marker = new mapboxgl.Marker({ color: asset.color })
-          .setLngLat(asset.position)
-          .setPopup(
-            new mapboxgl.Popup().setHTML(
-              `<div class="p-2">
-                <h3 class="font-semibold">${asset.name}</h3>
-                <p class="text-sm capitalize">${asset.type}</p>
-              </div>`
-            )
-          )
-          .addTo(mapInstance);
-        console.log(`✅ Added marker: ${asset.name}`);
-      } catch (error) {
-        console.error(`❌ Error adding marker ${asset.name}:`, error);
-      }
-    });
-  }, []);
-
-  const initializeMap = useCallback(async (
-    container: HTMLDivElement,
-    mapRef: React.MutableRefObject<mapboxgl.Map | null>,
-    isCompactMode: boolean,
-    setMapLoaded: (loaded: boolean) => void
-  ) => {
-    console.log(`🚀 INIT MAP START - ${isCompactMode ? 'compact' : 'full-screen'}`);
-    console.log('📦 Container:', container);
-    console.log('📐 Container dimensions:', container?.offsetWidth, 'x', container?.offsetHeight);
-    console.log('🗺️ Current map ref:', mapRef.current);
-
-    if (!container) {
-      console.error('❌ CRITICAL: Map container not available');
-      return;
-    }
-
-    if (mapRef.current) {
-      console.log('⚠️ Map already initialized, skipping...');
-      return;
-    }
-
-    console.log(`🗺️ Starting ${isCompactMode ? 'compact' : 'full-screen'} map initialization...`);
-    setIsInitializing(true);
-    
-    try {
-      console.log('🔑 Getting Mapbox token...');
+    const initializeMap = async () => {
       const token = await getMapboxToken();
-      if (!token) {
-        console.error('❌ CRITICAL: Cannot initialize map - no token received');
-        setIsInitializing(false);
-        return;
-      }
+      if (!token) return;
 
-      console.log('✅ Token received, setting up map...');
-      setMapError(null);
-      mapboxgl.accessToken = token;
+      try {
+        setMapError(null);
+        mapboxgl.accessToken = token;
 
-      console.log('🎯 Creating map instance...');
-      const newMap = new mapboxgl.Map({
-        container: container,
-        style: mapStyles[mapStyle],
-        center: [FARM_LNG, FARM_LAT],
-        zoom: isCompactMode ? 14 : 16,
-        attributionControl: false
-      });
+        map.current = new mapboxgl.Map({
+          container: mapContainer.current!,
+          style: mapStyles[mapStyle],
+          center: [FARM_LNG, FARM_LAT],
+          zoom: isCompact ? 14 : 16,
+          attributionControl: false
+        });
 
-      mapRef.current = newMap;
+        map.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
 
-      newMap.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
+        map.current.on('load', () => {
+          setMapLoaded(true);
+          addFarmMarkers();
+        });
 
-      newMap.on('load', () => {
-        console.log(`✅ ${isCompactMode ? 'Compact' : 'Full-screen'} map loaded successfully`);
-        setMapLoaded(true);
-        setIsInitializing(false);
-        addFarmMarkers(newMap);
-      });
+        map.current.on('error', (e) => {
+          console.error('Mapbox error:', e);
+          setMapError('Failed to load map. Please check your internet connection.');
+          setMapLoaded(false);
+        });
 
-      newMap.on('error', (e) => {
-        console.error('❌ Mapbox error:', e);
-        setMapError('Failed to load map. Please check your internet connection.');
-        setMapLoaded(false);
-        setIsInitializing(false);
-      });
-
-      if (!isCompactMode) {
-        newMap.on('click', (e) => {
+        map.current.on('click', (e) => {
           const { lng, lat } = e.lngLat;
           setClickedLocation([lng, lat]);
           
@@ -204,81 +123,47 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
                 </div>`
               )
             )
-            .addTo(newMap);
+            .addTo(map.current!);
 
           toast(`Location pinned: ${lat.toFixed(6)}°, ${lng.toFixed(6)}°`);
         });
-      }
 
-    } catch (error) {
-      console.error('❌ Error initializing map:', error);
-      setMapError('Failed to load map. Please check your internet connection.');
-      setIsInitializing(false);
-    }
-  }, [mapStyle, addFarmMarkers, getMapboxToken]);
-
-  // Initialize compact map
-  useEffect(() => {
-    if (isCompact && compactMapContainer.current && !compactMap.current) {
-      console.log('🔄 Initializing compact map...');
-      initializeMap(compactMapContainer.current, compactMap, true, setCompactMapLoaded);
-    }
-
-    return () => {
-      if (compactMap.current) {
-        console.log('🧹 Cleaning up compact map...');
-        compactMap.current.remove();
-        compactMap.current = null;
-        setCompactMapLoaded(false);
+        // Cleanup
+        return () => {
+          if (map.current) {
+            map.current.remove();
+            map.current = null;
+            setMapLoaded(false);
+          }
+        };
+      } catch (error) {
+        console.error('Error initializing map:', error);
+        setMapError('Failed to load map. Please check your internet connection.');
       }
     };
-  }, [isCompact, initializeMap]);
 
-  // Initialize full-screen map when dialog opens
-  useEffect(() => {
-    console.log('🔄 Full-screen effect triggered:', { isFullScreen, hasContainer: !!fullScreenMapContainer.current, hasMap: !!fullScreenMap.current });
-    
-    if (isFullScreen && fullScreenMapContainer.current && !fullScreenMap.current) {
-      console.log('🔄 Dialog opened, preparing full-screen map...');
-      
-      // Longer delay to ensure dialog is fully rendered and has proper dimensions
-      const timer = setTimeout(() => {
-        const container = fullScreenMapContainer.current;
-        console.log('⏰ Timer fired - checking container:', {
-          container: !!container,
-          dimensions: container ? `${container.offsetWidth}x${container.offsetHeight}` : 'N/A',
-          hasMap: !!fullScreenMap.current
-        });
-        
-        if (container && !fullScreenMap.current) {
-          console.log('🎯 Starting full-screen map initialization...');
-          initializeMap(container, fullScreenMap, false, setFullScreenMapLoaded);
-        } else {
-          console.error('❌ Full-screen initialization failed:', {
-            noContainer: !container,
-            mapExists: !!fullScreenMap.current
-          });
-        }
-      }, 500); // Increased delay
+    initializeMap();
+  }, []);
 
-      return () => {
-        console.log('🧹 Clearing full-screen timer...');
-        clearTimeout(timer);
-      };
-    }
+  const addFarmMarkers = () => {
+    if (!map.current) return;
 
-    // Cleanup when dialog closes
-    if (!isFullScreen && fullScreenMap.current) {
-      console.log('🧹 Dialog closed, cleaning up full-screen map...');
-      fullScreenMap.current.remove();
-      fullScreenMap.current = null;
-      setFullScreenMapLoaded(false);
-    }
-  }, [isFullScreen, initializeMap]);
+    farmAssets.forEach((asset) => {
+      const marker = new mapboxgl.Marker({ color: asset.color })
+        .setLngLat(asset.position)
+        .setPopup(
+          new mapboxgl.Popup().setHTML(
+            `<div class="p-2">
+              <h3 class="font-semibold">${asset.name}</h3>
+              <p class="text-sm capitalize">${asset.type}</p>
+            </div>`
+          )
+        )
+        .addTo(map.current!);
+    });
+  };
 
-  const locateUser = useCallback(() => {
-    const currentMap = isFullScreen ? fullScreenMap.current : compactMap.current;
-    
+  const locateUser = () => {
     if (!navigator.geolocation) {
       toast.error('Geolocation is not supported by this browser');
       return;
@@ -289,8 +174,8 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
         const { longitude, latitude } = position.coords;
         setUserLocation([longitude, latitude]);
         
-        if (currentMap) {
-          currentMap.flyTo({
+        if (map.current) {
+          map.current.flyTo({
             center: [longitude, latitude],
             zoom: 16,
             duration: 2000
@@ -307,7 +192,7 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
                 </div>`
               )
             )
-            .addTo(currentMap);
+            .addTo(map.current);
         }
 
         toast.success('Location found and pinned!');
@@ -322,22 +207,21 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
         maximumAge: 600000
       }
     );
-  }, [isFullScreen]);
+  };
 
-  const toggleMapStyle = useCallback(() => {
+  const toggleMapStyle = () => {
     const styles: (keyof typeof mapStyles)[] = ['satellite', 'streets', 'terrain'];
     const currentIndex = styles.indexOf(mapStyle);
     const nextStyle = styles[(currentIndex + 1) % styles.length];
     setMapStyle(nextStyle);
     
-    const currentMap = isFullScreen ? fullScreenMap.current : compactMap.current;
-    if (currentMap) {
-      currentMap.setStyle(mapStyles[nextStyle]);
-      currentMap.once('styledata', () => {
-        addFarmMarkers(currentMap);
+    if (map.current) {
+      map.current.setStyle(mapStyles[nextStyle]);
+      map.current.once('styledata', () => {
+        addFarmMarkers();
       });
     }
-  }, [mapStyle, isFullScreen, addFarmMarkers]);
+  };
 
   const CompactMap = () => {
     if (mapError) {
@@ -352,18 +236,11 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
     }
 
     return (
-      <div className="relative cursor-pointer group h-48 w-full rounded-lg overflow-hidden bg-muted/10">
-        <div 
-          ref={compactMapContainer} 
-          className="w-full h-full"
-          style={{ minHeight: '192px' }}
-        />
-        {(!compactMapLoaded || isInitializing) && !mapError && (
+      <div className="relative cursor-pointer group h-48 w-full rounded-lg overflow-hidden">
+        <div ref={mapContainer} className="w-full h-full" />
+        {!mapLoaded && !mapError && (
           <div className="absolute inset-0 bg-muted/50 flex items-center justify-center">
-            <div className="text-center space-y-2">
-              <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mx-auto" />
-              <p className="text-sm text-muted-foreground">Loading map...</p>
-            </div>
+            <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
           </div>
         )}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-center justify-center">
@@ -398,12 +275,8 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
     }
 
     return (
-      <div className="relative w-full h-[70vh] rounded-lg overflow-hidden bg-muted/10">
-        <div 
-          ref={fullScreenMapContainer} 
-          className="w-full h-full"
-          style={{ minHeight: '70vh' }}
-        />
+      <div className="relative w-full h-[70vh] rounded-lg overflow-hidden">
+        <div ref={mapContainer} className="w-full h-full" />
         
         {/* Map Controls */}
         <div className="absolute top-4 right-4 space-y-2">
@@ -412,7 +285,7 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
             size="sm"
             onClick={toggleMapStyle}
             title={`Switch to ${mapStyle === 'satellite' ? 'streets' : mapStyle === 'streets' ? 'terrain' : 'satellite'}`}
-            disabled={!fullScreenMapLoaded}
+            disabled={!mapLoaded}
           >
             {mapStyle === 'satellite' ? <MapIcon className="w-4 h-4" /> : 
              mapStyle === 'streets' ? <Mountain className="w-4 h-4" /> : 
@@ -424,7 +297,7 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
             size="sm"
             onClick={locateUser}
             title="Find my location"
-            disabled={!fullScreenMapLoaded}
+            disabled={!mapLoaded}
           >
             <Crosshair className="w-4 h-4" />
           </Button>
@@ -446,12 +319,9 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
           </div>
         </div>
 
-        {(!fullScreenMapLoaded || isInitializing) && !mapError && (
+        {!mapLoaded && !mapError && (
           <div className="absolute inset-0 bg-muted/50 flex items-center justify-center">
-            <div className="text-center space-y-2">
-              <div className="animate-spin w-8 h-8 border-3 border-primary border-t-transparent rounded-full mx-auto" />
-              <p className="text-sm text-muted-foreground">Loading full map...</p>
-            </div>
+            <div className="animate-spin w-8 h-8 border-3 border-primary border-t-transparent rounded-full" />
           </div>
         )}
       </div>
