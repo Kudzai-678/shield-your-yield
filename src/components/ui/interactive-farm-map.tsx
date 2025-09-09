@@ -130,12 +130,18 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
     isCompactMode: boolean,
     setMapLoaded: (loaded: boolean) => void
   ) => {
-    if (!container || mapRef.current) {
-      console.log('⚠️ Map container not available or map already initialized');
+    if (!container) {
+      console.log('❌ Map container not available');
       return;
     }
 
-    console.log(`🗺️ Initializing ${isCompactMode ? 'compact' : 'full-screen'} map...`);
+    if (mapRef.current) {
+      console.log('⚠️ Map already initialized, skipping...');
+      return;
+    }
+
+    console.log(`🗺️ Starting ${isCompactMode ? 'compact' : 'full-screen'} map initialization...`);
+    console.log('📐 Container dimensions:', container.offsetWidth, 'x', container.offsetHeight);
     setIsInitializing(true);
     
     try {
@@ -225,25 +231,27 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
   // Initialize full-screen map when dialog opens
   useEffect(() => {
     if (isFullScreen && fullScreenMapContainer.current && !fullScreenMap.current && !isInitializing) {
-      console.log('🔄 Initializing full-screen map...');
+      console.log('🔄 Dialog opened, initializing full-screen map...');
       // Small delay to ensure dialog is fully rendered
       const timer = setTimeout(() => {
         if (fullScreenMapContainer.current) {
+          console.log('🎯 Full-screen container ready, starting initialization...');
           initializeMap(fullScreenMapContainer.current, fullScreenMap, false, setFullScreenMapLoaded);
+        } else {
+          console.error('❌ Full-screen container not available after timeout');
         }
-      }, 100);
+      }, 150);
 
       return () => clearTimeout(timer);
     }
 
-    return () => {
-      if (!isFullScreen && fullScreenMap.current) {
-        console.log('🧹 Cleaning up full-screen map...');
-        fullScreenMap.current.remove();
-        fullScreenMap.current = null;
-        setFullScreenMapLoaded(false);
-      }
-    };
+    // Cleanup when dialog closes
+    if (!isFullScreen && fullScreenMap.current) {
+      console.log('🧹 Dialog closed, cleaning up full-screen map...');
+      fullScreenMap.current.remove();
+      fullScreenMap.current = null;
+      setFullScreenMapLoaded(false);
+    }
   }, [isFullScreen, initializeMap]);
 
   const locateUser = useCallback(() => {
