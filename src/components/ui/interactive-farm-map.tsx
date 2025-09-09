@@ -130,8 +130,13 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
     isCompactMode: boolean,
     setMapLoaded: (loaded: boolean) => void
   ) => {
+    console.log(`🚀 INIT MAP START - ${isCompactMode ? 'compact' : 'full-screen'}`);
+    console.log('📦 Container:', container);
+    console.log('📐 Container dimensions:', container?.offsetWidth, 'x', container?.offsetHeight);
+    console.log('🗺️ Current map ref:', mapRef.current);
+
     if (!container) {
-      console.log('❌ Map container not available');
+      console.error('❌ CRITICAL: Map container not available');
       return;
     }
 
@@ -141,17 +146,18 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
     }
 
     console.log(`🗺️ Starting ${isCompactMode ? 'compact' : 'full-screen'} map initialization...`);
-    console.log('📐 Container dimensions:', container.offsetWidth, 'x', container.offsetHeight);
     setIsInitializing(true);
     
     try {
+      console.log('🔑 Getting Mapbox token...');
       const token = await getMapboxToken();
       if (!token) {
-        console.log('❌ Cannot initialize map: no token');
+        console.error('❌ CRITICAL: Cannot initialize map - no token received');
         setIsInitializing(false);
         return;
       }
 
+      console.log('✅ Token received, setting up map...');
       setMapError(null);
       mapboxgl.accessToken = token;
 
@@ -230,19 +236,35 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
 
   // Initialize full-screen map when dialog opens
   useEffect(() => {
+    console.log('🔄 Full-screen effect triggered:', { isFullScreen, hasContainer: !!fullScreenMapContainer.current, hasMap: !!fullScreenMap.current });
+    
     if (isFullScreen && fullScreenMapContainer.current && !fullScreenMap.current) {
-      console.log('🔄 Dialog opened, initializing full-screen map...');
-      // Small delay to ensure dialog is fully rendered
+      console.log('🔄 Dialog opened, preparing full-screen map...');
+      
+      // Longer delay to ensure dialog is fully rendered and has proper dimensions
       const timer = setTimeout(() => {
-        if (fullScreenMapContainer.current && !fullScreenMap.current) {
-          console.log('🎯 Full-screen container ready, starting initialization...');
-          initializeMap(fullScreenMapContainer.current, fullScreenMap, false, setFullScreenMapLoaded);
+        const container = fullScreenMapContainer.current;
+        console.log('⏰ Timer fired - checking container:', {
+          container: !!container,
+          dimensions: container ? `${container.offsetWidth}x${container.offsetHeight}` : 'N/A',
+          hasMap: !!fullScreenMap.current
+        });
+        
+        if (container && !fullScreenMap.current) {
+          console.log('🎯 Starting full-screen map initialization...');
+          initializeMap(container, fullScreenMap, false, setFullScreenMapLoaded);
         } else {
-          console.error('❌ Full-screen container not available after timeout');
+          console.error('❌ Full-screen initialization failed:', {
+            noContainer: !container,
+            mapExists: !!fullScreenMap.current
+          });
         }
-      }, 250);
+      }, 500); // Increased delay
 
-      return () => clearTimeout(timer);
+      return () => {
+        console.log('🧹 Clearing full-screen timer...');
+        clearTimeout(timer);
+      };
     }
 
     // Cleanup when dialog closes
