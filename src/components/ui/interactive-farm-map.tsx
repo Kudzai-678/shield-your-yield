@@ -9,7 +9,9 @@ import {
   Crosshair,
   Map as MapIcon,
   Mountain,
-  AlertTriangle
+  AlertTriangle,
+  Plus,
+  Minus
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -218,6 +220,18 @@ const FullScreenMapComponent = () => {
     );
   };
 
+  const zoomIn = () => {
+    if (map.current) {
+      map.current.zoomIn();
+    }
+  };
+
+  const zoomOut = () => {
+    if (map.current) {
+      map.current.zoomOut();
+    }
+  };
+
   if (error) {
     return (
       <div className="w-full h-[70vh] rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center bg-muted/20">
@@ -234,6 +248,12 @@ const FullScreenMapComponent = () => {
       <div ref={mapContainer} className="w-full h-full" />
       
       <div className="absolute top-4 right-4 space-y-2 z-10">
+        <Button variant="secondary" size="sm" onClick={zoomIn} disabled={!isLoaded}>
+          <Plus className="w-4 h-4" />
+        </Button>
+        <Button variant="secondary" size="sm" onClick={zoomOut} disabled={!isLoaded}>
+          <Minus className="w-4 h-4" />
+        </Button>
         <Button variant="secondary" size="sm" onClick={toggleMapStyle} disabled={!isLoaded}>
           {mapStyle === 'satellite' ? <MapIcon className="w-4 h-4" /> : 
            mapStyle === 'streets' ? <Mountain className="w-4 h-4" /> : 
