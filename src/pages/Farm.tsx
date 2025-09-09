@@ -3,11 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FarmMap } from '@/components/FarmMap';
-import { useSearchParams } from 'react-router-dom';
+import { InteractiveFarmMap } from '@/components/ui/interactive-farm-map';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 export const Farm = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const activeTab = searchParams.get('tab') || 'crops';
 
   const handleTabChange = (value: string) => {
@@ -488,7 +489,7 @@ export const Farm = () => {
               <div className="border rounded-lg p-3 sm:p-4">
                 <h3 className="font-semibold text-sm sm:text-base mb-3">Farm Map</h3>
                 <div className="w-full">
-                  <FarmMap isCompact={true} className="w-full" />
+                  <InteractiveFarmMap isCompact={true} className="w-full" />
                 </div>
               </div>
             </CardContent>
