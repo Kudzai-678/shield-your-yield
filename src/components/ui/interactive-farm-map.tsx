@@ -134,7 +134,7 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
     };
 
     initializeCompactMap();
-  }, [isCompact, mapStyle]);
+  }, [isCompact]); // Removed mapStyle dependency
 
   // Initialize full-screen map when dialog opens
   useEffect(() => {
@@ -217,7 +217,18 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [isFullScreen, mapStyle]);
+  }, [isFullScreen]); // Removed mapStyle dependency
+
+  // Reset map loaded state when closing full screen
+  useEffect(() => {
+    if (!isFullScreen && fullScreenMapLoaded) {
+      setFullScreenMapLoaded(false);
+      if (fullScreenMap.current) {
+        fullScreenMap.current.remove();
+        fullScreenMap.current = null;
+      }
+    }
+  }, [isFullScreen, fullScreenMapLoaded]);
 
   // Cleanup maps
   useEffect(() => {
@@ -327,9 +338,9 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
 
     return (
       <div className="relative cursor-pointer group h-48 w-full rounded-lg overflow-hidden">
-        <div ref={compactMapContainer} className="w-full h-full" />
+        <div ref={compactMapContainer} className="w-full h-full absolute inset-0" />
         {!compactMapLoaded && !mapError && (
-          <div className="absolute inset-0 bg-muted/50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-muted/50 flex items-center justify-center z-10">
             <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
           </div>
         )}
@@ -366,7 +377,7 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
 
     return (
       <div className="relative w-full h-[70vh] rounded-lg overflow-hidden">
-        <div ref={fullScreenMapContainer} className="w-full h-full" />
+        <div ref={fullScreenMapContainer} className="w-full h-full absolute inset-0" />
         
         {/* Map Controls */}
         <div className="absolute top-4 right-4 space-y-2">
