@@ -87,8 +87,16 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
       if (!token) return;
 
       try {
+        console.log('Initializing compact map...');
         setMapError(null);
         mapboxgl.accessToken = token;
+
+        // Check container dimensions
+        const container = compactMapContainer.current;
+        if (container) {
+          const rect = container.getBoundingClientRect();
+          console.log('Compact container dimensions:', { width: rect.width, height: rect.height });
+        }
 
         compactMap.current = new mapboxgl.Map({
           container: compactMapContainer.current!,
@@ -101,6 +109,7 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
         compactMap.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
 
         compactMap.current.on('load', () => {
+          console.log('Compact map loaded successfully');
           setCompactMapLoaded(true);
           addFarmMarkers(compactMap.current);
         });
@@ -109,6 +118,14 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
           console.error('Compact Mapbox error:', e);
           setMapError('Failed to load map. Please check your internet connection.');
           setCompactMapLoaded(false);
+        });
+
+        compactMap.current.on('sourcedata', (e) => {
+          console.log('Compact map source data:', e.sourceId, e.isSourceLoaded);
+        });
+
+        compactMap.current.on('styledata', () => {
+          console.log('Compact map style loaded');
         });
       } catch (error) {
         console.error('Error initializing compact map:', error);
@@ -123,61 +140,83 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
   useEffect(() => {
     if (!isFullScreen || !fullScreenMapContainer.current || fullScreenMapLoaded) return;
 
-    const initializeFullScreenMap = async () => {
-      const token = await getMapboxToken();
-      if (!token) return;
+    // Add a small delay to ensure the dialog is fully rendered
+    const timer = setTimeout(async () => {
+      const initializeFullScreenMap = async () => {
+        const token = await getMapboxToken();
+        if (!token) return;
 
-      try {
-        setMapError(null);
-        mapboxgl.accessToken = token;
+        try {
+          console.log('Initializing full-screen map...');
+          setMapError(null);
+          mapboxgl.accessToken = token;
 
-        fullScreenMap.current = new mapboxgl.Map({
-          container: fullScreenMapContainer.current!,
-          style: mapStyles[mapStyle],
-          center: [FARM_LNG, FARM_LAT],
-          zoom: 16,
-          attributionControl: false
-        });
+          // Check container dimensions
+          const container = fullScreenMapContainer.current;
+          if (container) {
+            const rect = container.getBoundingClientRect();
+            console.log('Full-screen container dimensions:', { width: rect.width, height: rect.height });
+          }
 
-        fullScreenMap.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
+          fullScreenMap.current = new mapboxgl.Map({
+            container: fullScreenMapContainer.current!,
+            style: mapStyles[mapStyle],
+            center: [FARM_LNG, FARM_LAT],
+            zoom: 16,
+            attributionControl: false
+          });
 
-        fullScreenMap.current.on('load', () => {
-          setFullScreenMapLoaded(true);
-          addFarmMarkers(fullScreenMap.current);
-        });
+          fullScreenMap.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
 
-        fullScreenMap.current.on('error', (e) => {
-          console.error('Full-screen Mapbox error:', e);
-          setMapError('Failed to load map. Please check your internet connection.');
-          setFullScreenMapLoaded(false);
-        });
+          fullScreenMap.current.on('load', () => {
+            console.log('Full-screen map loaded successfully');
+            setFullScreenMapLoaded(true);
+            addFarmMarkers(fullScreenMap.current);
+          });
 
-        fullScreenMap.current.on('click', (e) => {
-          const { lng, lat } = e.lngLat;
-          setClickedLocation([lng, lat]);
-          
-          // Add clicked location marker
-          new mapboxgl.Marker({ color: '#ef4444' })
-            .setLngLat([lng, lat])
-            .setPopup(
-              new mapboxgl.Popup().setHTML(
-                `<div class="p-2">
-                  <h3 class="font-semibold">Clicked Location</h3>
-                  <p class="text-sm">${lat.toFixed(6)}°, ${lng.toFixed(6)}°</p>
-                </div>`
+          fullScreenMap.current.on('error', (e) => {
+            console.error('Full-screen Mapbox error:', e);
+            setMapError('Failed to load map. Please check your internet connection.');
+            setFullScreenMapLoaded(false);
+          });
+
+          fullScreenMap.current.on('sourcedata', (e) => {
+            console.log('Full-screen map source data:', e.sourceId, e.isSourceLoaded);
+          });
+
+          fullScreenMap.current.on('styledata', () => {
+            console.log('Full-screen map style loaded');
+          });
+
+          fullScreenMap.current.on('click', (e) => {
+            const { lng, lat } = e.lngLat;
+            setClickedLocation([lng, lat]);
+            
+            // Add clicked location marker
+            new mapboxgl.Marker({ color: '#ef4444' })
+              .setLngLat([lng, lat])
+              .setPopup(
+                new mapboxgl.Popup().setHTML(
+                  `<div class="p-2">
+                    <h3 class="font-semibold">Clicked Location</h3>
+                    <p class="text-sm">${lat.toFixed(6)}°, ${lng.toFixed(6)}°</p>
+                  </div>`
+                )
               )
-            )
-            .addTo(fullScreenMap.current!);
+              .addTo(fullScreenMap.current!);
 
-          toast(`Location pinned: ${lat.toFixed(6)}°, ${lng.toFixed(6)}°`);
-        });
-      } catch (error) {
-        console.error('Error initializing full-screen map:', error);
-        setMapError('Failed to load map. Please check your internet connection.');
-      }
-    };
+            toast(`Location pinned: ${lat.toFixed(6)}°, ${lng.toFixed(6)}°`);
+          });
+        } catch (error) {
+          console.error('Error initializing full-screen map:', error);
+          setMapError('Failed to load map. Please check your internet connection.');
+        }
+      };
 
-    initializeFullScreenMap();
+      await initializeFullScreenMap();
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [isFullScreen, mapStyle]);
 
   // Cleanup maps
