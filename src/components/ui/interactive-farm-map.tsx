@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { 
   Maximize2, 
@@ -262,6 +262,10 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
           </div>
         </DialogTrigger>
         <DialogContent className="max-w-4xl w-full h-[80vh]">
+          <DialogTitle className="sr-only">Interactive Farm Map</DialogTitle>
+          <DialogDescription className="sr-only">
+            View and interact with the farm location map. Click to place pins and use location services.
+          </DialogDescription>
           <FullScreenMap />
         </DialogContent>
       </Dialog>
