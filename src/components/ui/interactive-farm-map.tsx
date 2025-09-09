@@ -63,7 +63,7 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
     terrain: 'mapbox://styles/mapbox/outdoors-v12'
   };
 
-  const getMapboxToken = async (): Promise<string | null> => {
+  const getMapboxToken = useCallback(async (): Promise<string | null> => {
     try {
       console.log('🗺️ Fetching Mapbox token...');
       const { data, error } = await supabase.functions.invoke('get-mapbox-token');
@@ -95,7 +95,7 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
       setMapError('Unable to connect to map service');
       return null;
     }
-  };
+  }, []);
 
   const addFarmMarkers = useCallback((mapInstance: mapboxgl.Map) => {
     if (!mapInstance) {
@@ -203,7 +203,7 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
       setMapError('Failed to load map. Please check your internet connection.');
       setIsInitializing(false);
     }
-  }, [mapStyle, getMapboxToken, addFarmMarkers]);
+  }, [mapStyle, addFarmMarkers, getMapboxToken]);
 
   // Initialize compact map
   useEffect(() => {
