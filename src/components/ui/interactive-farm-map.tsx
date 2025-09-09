@@ -213,7 +213,7 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
 
   // Initialize compact map
   useEffect(() => {
-    if (isCompact && compactMapContainer.current && !compactMap.current && !isInitializing) {
+    if (isCompact && compactMapContainer.current && !compactMap.current) {
       console.log('🔄 Initializing compact map...');
       initializeMap(compactMapContainer.current, compactMap, true, setCompactMapLoaded);
     }
@@ -230,17 +230,17 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
 
   // Initialize full-screen map when dialog opens
   useEffect(() => {
-    if (isFullScreen && fullScreenMapContainer.current && !fullScreenMap.current && !isInitializing) {
+    if (isFullScreen && fullScreenMapContainer.current && !fullScreenMap.current) {
       console.log('🔄 Dialog opened, initializing full-screen map...');
       // Small delay to ensure dialog is fully rendered
       const timer = setTimeout(() => {
-        if (fullScreenMapContainer.current) {
+        if (fullScreenMapContainer.current && !fullScreenMap.current) {
           console.log('🎯 Full-screen container ready, starting initialization...');
           initializeMap(fullScreenMapContainer.current, fullScreenMap, false, setFullScreenMapLoaded);
         } else {
           console.error('❌ Full-screen container not available after timeout');
         }
-      }, 150);
+      }, 250);
 
       return () => clearTimeout(timer);
     }
